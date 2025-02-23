@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Visitantes - SCV</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <nav>
+        <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+        <ul class="menu" aria-hidden="true">
+            <li><a href="index.html">Início</a></li>
+            <li><a href="cadastrovisitantes.html">Cadastrar Visitante</a></li>
+            <li><a href="listavisitantes.html">Lista de Visitantes</a></li>
+            <li><a href="sobre.html">Sobre</a></li>
+            <li><a href="contato.html">Contato</a></li>
+        </ul>
+    </nav>
+    <main>
+        <h1>Lista de Visitantes</h1>
+        <button id="generatePDF">Gerar PDF</button>
+        <div id="displayVisitors"></div>
+    </main>
+    <footer>
+        <p>Desenvolvido por Ivonildo Lima</p>
+        <p>
+            <a href="https://www.linkedin.com/in/ivonildolima" target="_blank">LinkedIn</a> |
+            <a href="https://twitter.com/ivonildolima" target="_blank">X</a> |
+            <a href="https://www.youtube.com/c/ivonildolima" target="_blank">YouTube</a>
+        </p>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

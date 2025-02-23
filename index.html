@@ -1,0 +1,45 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Início - Sistema de Visitantes</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <button class="menu-toggle" aria-label="Abrir menu" onclick="toggleMenu()">&#9776;</button>
+            <ul class="menu" id="menu">
+                <li><a href="cadastrovisitantes.html">Cadastrar Visitante</a></li>
+                <li><a href="listavisitantes.html">Lista de Visitantes</a></li>
+                <li><a href="sobre.html">Sobre o Sistema</a></li>
+                <li><a href="contato.html">Contato</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Bem-vindo ao Sistema de Cadastro de Visitantes</h1>
+        <p>Gerencie e registre visitantes de forma eficiente.</p>
+    </main>
+    <footer>
+        <p>&copy; 2025 Sistema de Cadastro de Visitantes. Todos os direitos reservados.</p>
+        <p>Desenvolvido por Ivonildo Lima</p>
+        <p>
+            <a href="https://www.linkedin.com/in/ivonildolima" target="_blank">LinkedIn</a> |
+            <a href="https://twitter.com/ivonildolima" target="_blank">X</a> |
+            <a href="https://www.youtube.com/c/ivonildolima" target="_blank">YouTube</a>
+        </p>
+    </footer>
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById("menu");
+            menu.classList.toggle("active");
+        }
+    </script>
+</body>
+
+</html>
