@@ -6,12 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Visitantes - SCV</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
     <nav>
         <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
-        <ul class="menu" aria-hidden="true">
+        <ul class="menu" id="menu">
             <li><a href="index.html">Início</a></li>
             <li><a href="cadastrovisitantes.html">Cadastrar Visitante</a></li>
             <li><a href="listavisitantes.html">Lista de Visitantes</a></li>
@@ -27,13 +28,35 @@
     <footer>
         <p>Desenvolvido por Ivonildo Lima</p>
         <p>
-            <a href="https://www.linkedin.com/in/ivonildolima" target="_blank">LinkedIn</a> |
-            <a href="https://twitter.com/ivonildolima" target="_blank">X</a> |
-            <a href="https://www.youtube.com/c/ivonildolima" target="_blank">YouTube</a>
+            <a href="https://www.linkedin.com/in/ivonildolima" target="_blank">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="https://twitter.com/ivonildolima" target="_blank">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://www.youtube.com/c/ivonildolima" target="_blank">
+                <i class="fab fa-youtube"></i>
+            </a>
         </p>
     </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <script src="script.js"></script>
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById("menu");
+            const menuToggle = document.querySelector('.menu-toggle');
+            menu.classList.toggle("show");
+            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+            menuToggle.setAttribute('aria-expanded', !isExpanded);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuToggle = document.querySelector('.menu-toggle');
+            if (menuToggle) {
+                menuToggle.addEventListener('click', toggleMenu);
+            }
+        });
+    </script>
 </body>
 
 </html>

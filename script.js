@@ -1,3 +1,8 @@
+function toggleMenu() {
+    const menu = document.getElementById("menu");
+    menu.classList.toggle("active");
+}
+
 // Adicionar evento quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', function () {
     const menuToggle = document.querySelector('.menu-toggle');
@@ -9,12 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const generatePDFButton = document.getElementById('generatePDF');
 
     if (menuToggle) {
-        menuToggle.addEventListener('click', function () {
-            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
-            menuToggle.setAttribute('aria-expanded', !isExpanded);
-            menu.setAttribute('aria-hidden', isExpanded);
-            menu.classList.toggle('show');
-        });
+        menuToggle.addEventListener('click', toggleMenu);
     }
 
     if (evangelicalRadios) {

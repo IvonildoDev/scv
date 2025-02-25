@@ -3,7 +3,20 @@ body {
     font-family: Arial, sans-serif;
     margin: 20px;
     text-align: center;
-    background-color: #f4f4f4;
+    background-color: #618499;
+    color: white;
+}
+
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+h1, h2 {
+    text-align: center;
+    color: white;
 }
 
 /* Estilos de navegação */
@@ -17,7 +30,7 @@ nav {
 }
 
 .menu-toggle {
-    display: none;
+    display: block;
     font-size: 24px;
     color: white;
     background: none;
@@ -30,9 +43,36 @@ nav {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    display: flex;
+    display: none;
     justify-content: center;
     font-size: 18px;
+    text-align: center;
+}
+
+.menu.show {
+    display: block;
+}
+
+.menu-toggle[aria-expanded="true"] {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .menu {
+        display: flex;
+    }
+
+    .menu.show {
+        display: flex;
+    }
+
+    .menu li {
+        margin: 0 10px;
+    }
+
+    .menu-toggle {
+        display: none;
+    }
 }
 
 .menu li {
@@ -67,6 +107,7 @@ form {
     border-radius: 8px;
     background-color: #f9f9f9;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: black;
 }
 
 label {
@@ -91,23 +132,110 @@ input, select {
     align-items: center;
 }
 
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
 button {
     padding: 10px 15px;
     background-color: #007BFF;
     color: white;
     border: none;
-    border-radius: 4px;
+    padding-bottom: 15px;
+    border-radius: 6px;
     cursor: pointer;
     width: 100%;
+    flex: 1;
 }
 
 button:hover {
     background-color: #0056b3;
 }
 
+button#clearHistory {
+    background-color: red;
+    padding-top: 20px;
+    color: white;
+}
+
+button#clearHistory:hover {
+    background-color: rgb(165, 137, 137);
+}
+
+button#generatePDF {
+    background-color: red;
+    color: white;
+}
+
+button#generatePDF:hover {
+    background-color: darkred;
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #007BFF;
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    margin-right: 10px;
+}
+
+input[type="checkbox"]:checked::before {
+    content: '✔';
+    position: absolute;
+    top: 30%;
+    left: 30%;
+    font-size: 16px;
+    color: #007BFF;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+main {
+    flex: 1;
+}
+
+footer {
+    background-color: #333;
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid #e9ecef;
+    margin-top: 20px;
+    color: white;
+}
+
+footer p {
+    margin: 5px 0;
+}
+
+footer a {
+    color: white;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+footer a img {
+    vertical-align: middle;
+    margin: 0 5px;
+}
+
 #displayVisitors {
     margin-top: 20px;
     text-align: left;
+    color: black;
 }
 
 .visitor {
@@ -117,6 +245,7 @@ button:hover {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: black;
 }
 
 .visitor p {

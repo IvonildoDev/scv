@@ -7,12 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Início - Sistema de Visitantes</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
     <header>
         <nav>
-            <button class="menu-toggle" aria-label="Abrir menu" onclick="toggleMenu()">&#9776;</button>
+            <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
             <ul class="menu" id="menu">
                 <li><a href="cadastrovisitantes.html">Cadastrar Visitante</a></li>
                 <li><a href="listavisitantes.html">Lista de Visitantes</a></li>
@@ -23,22 +24,40 @@
     </header>
     <main>
         <h1>Bem-vindo ao Sistema de Cadastro de Visitantes</h1>
-        <p>Gerencie e registre visitantes de forma eficiente.</p>
+        <h2>Salmos 122:1<br>
+            Alegrei-me <br>quando me disseram:
+            Vamos à Casa do Senhor!</h2>
     </main>
     <footer>
         <p>&copy; 2025 Sistema de Cadastro de Visitantes. Todos os direitos reservados.</p>
         <p>Desenvolvido por Ivonildo Lima</p>
         <p>
-            <a href="https://www.linkedin.com/in/ivonildolima" target="_blank">LinkedIn</a> |
-            <a href="https://twitter.com/ivonildolima" target="_blank">X</a> |
-            <a href="https://www.youtube.com/c/ivonildolima" target="_blank">YouTube</a>
+            <a href="https://www.linkedin.com/in/ivonildolima" target="_blank">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="https://twitter.com/ivonildolima" target="_blank">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://www.youtube.com/c/ivonildolima" target="_blank">
+                <i class="fab fa-youtube"></i>
+            </a>
         </p>
     </footer>
     <script>
         function toggleMenu() {
             const menu = document.getElementById("menu");
-            menu.classList.toggle("active");
+            const menuToggle = document.querySelector('.menu-toggle');
+            menu.classList.toggle("show");
+            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+            menuToggle.setAttribute('aria-expanded', !isExpanded);
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuToggle = document.querySelector('.menu-toggle');
+            if (menuToggle) {
+                menuToggle.addEventListener('click', toggleMenu);
+            }
+        });
     </script>
 </body>
 
