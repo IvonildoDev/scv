@@ -4,57 +4,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sobre o Sistema</title>
+    <title>Sobre - SCV</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
     <nav>
-        <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+        <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
         <ul class="menu" id="menu">
             <li><a href="index.html">Início</a></li>
             <li><a href="cadastrovisitantes.html">Cadastrar Visitante</a></li>
             <li><a href="listavisitantes.html">Lista de Visitantes</a></li>
-            <li><a href="sobre.html">Sobre</a></li>
             <li><a href="contato.html">Contato</a></li>
         </ul>
     </nav>
     <main>
         <h1>Sobre o Sistema</h1>
-        <p>Este sistema foi desenvolvido para gerenciar o cadastro de visitantes de forma eficiente e prática.</p>
-        <p>Utilizamos tecnologias modernas para garantir a segurança e a integridade dos dados.</p>
+        <p>O Sistema de Cadastro de Visitantes (SCV) é mais do que uma ferramenta — é uma ponte que conecta pessoas,
+            histórias e propósitos. Desenvolvido com paixão e inovação, nosso objetivo é simplificar a gestão de
+            visitantes, oferecendo uma solução prática, segura e moderna para registrar e organizar cada presença com
+            cuidado e eficiência.</p>
+        <p>Com tecnologias de ponta, garantimos a proteção dos dados e uma experiência fluida para quem utiliza. Seja
+            para igrejas, eventos ou comunidades, o SCV foi pensado para facilitar o dia a dia, permitindo que você
+            foque no que realmente importa: acolher .</p>
+        <p>Junte-se a nós nessa jornada de transformar registros em relações e dados em significado.</p>
     </main>
     <footer>
         <p>Desenvolvido por Ivonildo Lima</p>
         <p>
-            <a href="https://www.linkedin.com/in/ivonildolima" target="_blank">
-                <i class="fab fa-linkedin"></i>
-            </a>
-            <a href="https://twitter.com/ivonildolima" target="_blank">
-                <i class="fab fa-twitter"></i>
-            </a>
-            <a href="https://www.youtube.com/c/ivonildolima" target="_blank">
-                <i class="fab fa-youtube"></i>
-            </a>
+            <a href="https://www.linkedin.com/in/ivonildolima" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="https://twitter.com/ivonildolima" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.youtube.com/c/ivonildolima" target="_blank"><i class="fab fa-youtube"></i></a>
         </p>
     </footer>
-    <script>
-        function toggleMenu() {
-            const menu = document.getElementById("menu");
-            const menuToggle = document.querySelector('.menu-toggle');
-            menu.classList.toggle("show");
-            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
-            menuToggle.setAttribute('aria-expanded', !isExpanded);
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const menuToggle = document.querySelector('.menu-toggle');
-            if (menuToggle) {
-                menuToggle.addEventListener('click', toggleMenu);
-            }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>

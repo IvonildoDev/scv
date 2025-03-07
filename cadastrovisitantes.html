@@ -11,10 +11,9 @@
 
 <body>
     <nav>
-        <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+        <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
         <ul class="menu" id="menu">
             <li><a href="index.html">Início</a></li>
-            <li><a href="cadastrovisitantes.html">Cadastrar Visitante</a></li>
             <li><a href="listavisitantes.html">Lista de Visitantes</a></li>
             <li><a href="sobre.html">Sobre</a></li>
             <li><a href="contato.html">Contato</a></li>
@@ -27,12 +26,10 @@
                 <label for="name">Nome:</label>
                 <input type="text" id="name" name="name" required>
             </div>
-
             <div class="form-group">
                 <label for="city">Cidade:</label>
                 <input type="text" id="city" name="city" required>
             </div>
-
             <div class="form-group">
                 <label>É evangélico?</label>
                 <div class="radio-group">
@@ -42,49 +39,26 @@
                     <input type="radio" id="evangelicalNo" name="evangelical" value="Não" required>
                 </div>
             </div>
-
             <div id="churchSection" class="form-group" style="display: none;">
                 <label for="churchName">Nome da Igreja:</label>
                 <input type="text" id="churchName" name="churchName">
             </div>
-            <div id="displayVisitors"></div>
             <div class="form-buttons">
                 <button type="submit">Cadastrar</button>
                 <button type="button" id="clearHistory">Limpar Histórico</button>
             </div>
         </form>
+        <div id="displayVisitors"></div>
     </main>
     <footer>
         <p>Desenvolvido por Ivonildo Lima</p>
         <p>
-            <a href="https://www.linkedin.com/in/ivonildolima" target="_blank">
-                <i class="fab fa-linkedin"></i>
-            </a>
-            <a href="https://twitter.com/ivonildolima" target="_blank">
-                <i class="fab fa-twitter"></i>
-            </a>
-            <a href="https://www.youtube.com/c/ivonildolima" target="_blank">
-                <i class="fab fa-youtube"></i>
-            </a>
+            <a href="https://www.linkedin.com/in/ivonildolima" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="https://twitter.com/ivonildolima" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.youtube.com/c/ivonildolima" target="_blank"><i class="fab fa-youtube"></i></a>
         </p>
     </footer>
     <script src="script.js"></script>
-    <script>
-        function toggleMenu() {
-            const menu = document.getElementById("menu");
-            const menuToggle = document.querySelector('.menu-toggle');
-            menu.classList.toggle("show");
-            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
-            menuToggle.setAttribute('aria-expanded', !isExpanded);
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const menuToggle = document.querySelector('.menu-toggle');
-            if (menuToggle) {
-                menuToggle.addEventListener('click', toggleMenu);
-            }
-        });
-    </script>
 </body>
 
 </html>

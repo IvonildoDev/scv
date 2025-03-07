@@ -1,17 +1,19 @@
 function toggleMenu() {
     const menu = document.getElementById("menu");
-    menu.classList.toggle("active");
+    const menuToggle = document.querySelector('.menu-toggle');
+    menu.classList.toggle("show");
+    const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+    menuToggle.setAttribute('aria-expanded', !isExpanded);
 }
 
-// Adicionar evento quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', function () {
     const menuToggle = document.querySelector('.menu-toggle');
-    const menu = document.querySelector('.menu');
     const evangelicalRadios = document.querySelectorAll('input[name="evangelical"]');
     const churchSection = document.getElementById('churchSection');
     const visitorForm = document.getElementById('visitorForm');
     const displayVisitorsDiv = document.getElementById('displayVisitors');
     const generatePDFButton = document.getElementById('generatePDF');
+    const clearHistoryButton = document.getElementById('clearHistory');
 
     if (menuToggle) {
         menuToggle.addEventListener('click', toggleMenu);
@@ -19,16 +21,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (evangelicalRadios) {
         evangelicalRadios.forEach(radio => {
-            const label = radio.parentElement;
-            if (label) {
-                label.classList.add('checkbox-label');
-            }
             radio.addEventListener('change', function () {
-                if (this.value === 'Sim') {
-                    churchSection.style.display = 'block';
-                } else {
-                    churchSection.style.display = 'none';
-                }
+                churchSection.style.display = this.value === 'Sim' ? 'block' : 'none';
             });
         });
     }
@@ -59,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function displayVisitor(visitor) {
         const visitorDiv = document.createElement('div');
         visitorDiv.classList.add('visitor');
+        visitorDiv.style.opacity = '0';
         visitorDiv.innerHTML = `
             <p><strong>Nome:</strong> ${visitor.name}</p>
             <p><strong>Cidade:</strong> ${visitor.city}</p>
@@ -66,46 +61,30 @@ document.addEventListener('DOMContentLoaded', function () {
             ${visitor.evangelical === 'Sim' ? `<p><strong>Nome da Igreja:</strong> ${visitor.churchName}</p>` : ''}
         `;
         displayVisitorsDiv.appendChild(visitorDiv);
+        setTimeout(() => visitorDiv.style.opacity = '1', 10);
     }
 
     function displayVisitors() {
-        const displayDiv = document.getElementById('displayVisitors');
-        if (!displayDiv) return;
-
-        try {
-            const visitors = JSON.parse(localStorage.getItem('visitors')) || [];
-            displayDiv.innerHTML = '';
-
-            if (visitors.length === 0) {
-                displayDiv.innerHTML = '<p>Nenhum visitante cadastrado.</p>';
-                return;
-            }
-
-            visitors.forEach(visitor => {
-                displayDiv.innerHTML += `
-                    <div class="visitor">
-                        <p><strong>Nome:</strong> ${visitor.name}</p>
-                        <p><strong>Cidade:</strong> ${visitor.city}</p>
-                        <p><strong>É evangélico:</strong> ${visitor.evangelical}</p>
-                        ${visitor.evangelical === 'Sim' ? `<p><strong>Nome da Igreja:</strong> ${visitor.churchName}</p>` : ''}
-                    </div>
-                `;
-            });
-        } catch (error) {
-            console.error('Erro ao exibir dados:', error);
-        }
+        if (!displayVisitorsDiv) return;
+        const visitors = JSON.parse(localStorage.getItem('visitors')) || [];
+        displayVisitorsDiv.innerHTML = visitors.length === 0
+            ? '<p>Nenhum visitante cadastrado.</p>'
+            : visitors.map(visitor => `
+                <div class="visitor">
+                    <p><strong>Nome:</strong> ${visitor.name}</p>
+                    <p><strong>Cidade:</strong> ${visitor.city}</p>
+                    <p><strong>É evangélico:</strong> ${visitor.evangelical}</p>
+                    ${visitor.evangelical === 'Sim' ? `<p><strong>Nome da Igreja:</strong> ${visitor.churchName}</p>` : ''}
+                </div>
+            `).join('');
     }
 
-    // Carregar visitantes ao iniciar a página
-    displayVisitors();
-
-    // Gerar PDF
     if (generatePDFButton) {
         generatePDFButton.addEventListener('click', function () {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-
             const visitors = JSON.parse(localStorage.getItem('visitors')) || [];
+
             if (visitors.length === 0) {
                 alert('Nenhum visitante cadastrado para gerar PDF.');
                 return;
@@ -113,8 +92,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             doc.setFontSize(18);
             doc.text('Lista de Visitantes', 105, 10, null, null, 'center');
-            doc.setFontSize(12);
-
             let y = 20;
             visitors.forEach(visitor => {
                 doc.setFontSize(14);
@@ -129,16 +106,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     doc.text(`Nome da Igreja: ${visitor.churchName}`, 10, y);
                     y += 10;
                 }
-                y += 10; // Add extra space between visitors
+                y += 10;
             });
-
             doc.save('lista_de_visitantes.pdf');
         });
     }
 
-    // Limpar histórico
-    document.getElementById('clearHistory').addEventListener('click', () => {
-        localStorage.removeItem('visitors');
-        document.getElementById('displayVisitors').innerHTML = '';
-    });
+    if (clearHistoryButton) {
+        clearHistoryButton.addEventListener('click', () => {
+            localStorage.removeItem('visitors');
+            displayVisitorsDiv.innerHTML = '';
+        });
+    }
+
+    displayVisitors();
 });

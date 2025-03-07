@@ -1,216 +1,217 @@
-/* Estilos gerais */
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    text-align: center;
-    background-color: #618499;
-    color: white;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body, html {
     height: 100%;
-    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: #fff;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
 }
 
 h1, h2 {
+    font-weight: 600;
     text-align: center;
-    color: white;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
 }
 
-/* Estilos de navegação */
 nav {
-    background-color: #333;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
+    background: linear-gradient(to right, #2a5298, #1e3c72);
+    padding: 15px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .menu-toggle {
-    display: block;
-    font-size: 24px;
-    color: white;
+    font-size: 28px;
+    color: #fff;
     background: none;
     border: none;
     cursor: pointer;
-    padding: 14px 16px;
+    display: none;
 }
 
 .menu {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    display: none;
+    list-style: none;
+    display: flex;
     justify-content: center;
-    font-size: 18px;
-    text-align: center;
-}
-
-.menu.show {
-    display: block;
-}
-
-.menu-toggle[aria-expanded="true"] {
-    display: none;
-}
-
-@media (min-width: 768px) {
-    .menu {
-        display: flex;
-    }
-
-    .menu.show {
-        display: flex;
-    }
-
-    .menu li {
-        margin: 0 10px;
-    }
-
-    .menu-toggle {
-        display: none;
-    }
-}
-
-.menu li {
-    margin: 0 10px;
+    gap: 30px;
 }
 
 .menu li a {
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
+    color: #fff;
     text-decoration: none;
-    transition: background-color 0.3s;
+    font-weight: 400;
+    padding: 10px 20px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
 }
 
 .menu li a:hover {
-    background-color: #111;
-}
-
-.menu[aria-hidden="false"] {
-    display: block;
-}
-
-/* Estilos do formulário */
-form {
-    margin-top: 20px;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    color: black;
-}
-
-label {
-    display: block;
-    margin-top: 10px;
-    text-align: left;
-}
-
-input, select {
-    margin-bottom: 10px;
-    padding: 10px;
-    width: 100%;
-    max-width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-.radio-group {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.form-buttons {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-button {
-    padding: 10px 15px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    padding-bottom: 15px;
-    border-radius: 6px;
-    cursor: pointer;
-    width: 100%;
-    flex: 1;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-button#clearHistory {
-    background-color: red;
-    padding-top: 20px;
-    color: white;
-}
-
-button#clearHistory:hover {
-    background-color: rgb(165, 137, 137);
-}
-
-button#generatePDF {
-    background-color: red;
-    color: white;
-}
-
-button#generatePDF:hover {
-    background-color: darkred;
-}
-
-input[type="checkbox"] {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #007BFF;
-    border-radius: 4px;
-    position: relative;
-    cursor: pointer;
-    outline: none;
-    margin-right: 10px;
-}
-
-input[type="checkbox"]:checked::before {
-    content: '✔';
-    position: absolute;
-    top: 30%;
-    left: 30%;
-    font-size: 16px;
-    color: #007BFF;
-}
-
-.checkbox-label {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffd700;
 }
 
 main {
     flex: 1;
+    padding: 40px 20px;
+    animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+form {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    color: #333;
+    transition: transform 0.3s ease;
+}
+
+form:hover {
+    transform: translateY(-5px);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: block;
+    text-align: left;
+    color: #2a5298;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 2px solid #2a5298;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+input:focus, select:focus {
+    border-color: #ffd700;
+    outline: none;
+}
+
+.radio-group {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.radio-group label {
+    font-weight: 400;
+    color: #333;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+button {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+button[type="submit"] {
+    background: linear-gradient(to right, #2a5298, #1e3c72);
+    color: #fff;
+}
+
+button[type="submit"]:hover {
+    background: linear-gradient(to right, #1e3c72, #2a5298);
+}
+
+button#clearHistory {
+    background: linear-gradient(to right, #ff4b4b, #d32f2f);
+    color: #fff;
+}
+
+button#clearHistory:hover {
+    background: linear-gradient(to right, #d32f2f, #ff4b4b);
+}
+
+button#generatePDF {
+    background: linear-gradient(to right, #ff9800, #f57c00);
+    color: #fff;
+    margin: 20px auto;
+    display: block;
+    max-width: 200px;
+}
+
+button#generatePDF:hover {
+    background: linear-gradient(to right, #f57c00, #ff9800);
+}
+
+#displayVisitors {
+    max-width: 600px;
+    margin: 20px auto;
+}
+main.sobre {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+main.sobre p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    text-align: justify;
+}
+
+.visitor {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    color: #333;
+    transition: transform 0.3s ease;
+}
+
+.visitor:hover {
+    transform: scale(1.02);
+}
+
+.visitor p {
+    margin: 5px 0;
 }
 
 footer {
-    background-color: #333;
+    background: linear-gradient(to right, #2a5298, #1e3c72);
     padding: 20px;
     text-align: center;
-    border-top: 1px solid #e9ecef;
-    margin-top: 20px;
-    color: white;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
 }
 
 footer p {
@@ -218,53 +219,42 @@ footer p {
 }
 
 footer a {
-    color: white;
-    text-decoration: none;
-    margin: 0 5px;
+    color: #fff;
+    margin: 0 10px;
+    font-size: 20px;
+    transition: color 0.3s ease;
 }
 
 footer a:hover {
-    text-decoration: underline;
+    color: #ffd700;
 }
 
-footer a img {
-    vertical-align: middle;
-    margin: 0 5px;
-}
-
-#displayVisitors {
-    margin-top: 20px;
-    text-align: left;
-    color: black;
-}
-
-.visitor {
-    background-color: #fff;
-    padding: 1em;
-    margin-bottom: 1em;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    color: black;
-}
-
-.visitor p {
-    margin: 0.5em 0;
-}
-
-/* Estilos responsivos */
-@media screen and (max-width: 600px) {
-    .menu {
-        flex-direction: column;
-        display: none; /* Hide menu by default on small screens */
-    }
+@media (max-width: 768px) {
     .menu-toggle {
-        display: block; /* Show hamburger button */
+        display: block;
     }
+
+    .menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background: #1e3c72;
+        padding: 20px 0;
+    }
+
     .menu.show {
-        display: flex; /* Show menu when activated */
+        display: flex;
     }
-    .menu-toggle[aria-expanded="true"] {
-        display: none; /* Hide hamburger button when menu is expanded */
+
+    .menu li a {
+        padding: 15px;
+        border-radius: 0;
+    }
+
+    form {
+        max-width: 100%;
     }
 }
