@@ -6,17 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contato - SCV</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
 <body>
     <nav>
-        <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
-        <ul class="menu" id="menu">
+        <div class="logo">
+            <span class="logo-text">SCV</span>
+        </div>
+        <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+        <ul class="menu" aria-hidden="true">
             <li><a href="index.html">Início</a></li>
             <li><a href="cadastrovisitantes.html">Cadastrar Visitante</a></li>
             <li><a href="listavisitantes.html">Lista de Visitantes</a></li>
             <li><a href="sobre.html">Sobre</a></li>
+            <li><a href="contato.html">Contato</a></li>
         </ul>
     </nav>
     <main>
@@ -26,12 +30,37 @@
         <p>Telefone: (11) 1234-5678</p>
     </main>
     <footer>
-        <p>Desenvolvido por Ivonildo Lima</p>
-        <p>
-            <a href="https://www.linkedin.com/in/ivonildolima" target="_blank"><i class="fab fa-linkedin"></i></a>
-            <a href="https://twitter.com/ivonildolima" target="_blank"><i class="fab fa-twitter"></i></a>
-            <a href="https://www.youtube.com/c/ivonildolima" target="_blank"><i class="fab fa-youtube"></i></a>
-        </p>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>SCV</h3>
+                <p>Sistema de Cadastro de Visitantes</p>
+                <p>Facilitando o registro e controle de visitantes de forma eficiente.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Links Rápidos</h3>
+                <ul class="footer-links">
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="cadastrovisitantes.html">Cadastrar Visitante</a></li>
+                    <li><a href="listavisitantes.html">Lista de Visitantes</a></li>
+                    <li><a href="sobre.html">Sobre</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contato</h3>
+                <p>Email: contato@scv.com</p>
+                <p>Telefone: (00) 1234-5678</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fa fa-facebook"></i></a>
+                    <a href="#"><i class="fa fa-twitter"></i></a>
+                    <a href="#"><i class="fa fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 SCV - Sistema de Cadastro de Visitantes. Todos os direitos reservados.</p>
+            <p>Desenvolvido por Ivonildo Lima</p>
+        </div>
     </footer>
     <script src="script.js"></script>
 </body>

@@ -24,13 +24,59 @@ h1, h2 {
     margin-bottom: 20px;
 }
 
+/* Estilos para a logo */
 nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background: linear-gradient(to right, #2a5298, #1e3c72);
     padding: 15px 20px;
     position: sticky;
     top: 0;
     z-index: 1000;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+/* Estilos para a logo - modificação para remover a frase */
+.logo-text {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1px;
+    background: -webkit-linear-gradient(#ffd700, #ffaa00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+}
+
+/* Remova ou comente o bloco abaixo para eliminar a frase */
+/*
+.logo-text::after {
+    content: "Sistema de Cadastro de Visitantes";
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    font-size: 0.5rem;
+    font-weight: 400;
+    color: white;
+    letter-spacing: normal;
+    -webkit-text-fill-color: white;
+}
+*/
+
+/* Melhorias no menu para acomodar a logo */
+.menu {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-left: auto;
 }
 
 .menu-toggle {
@@ -40,13 +86,6 @@ nav {
     border: none;
     cursor: pointer;
     display: none;
-}
-
-.menu {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    gap: 30px;
 }
 
 .menu li a {
@@ -207,11 +246,87 @@ main.sobre p {
     margin: 5px 0;
 }
 
+/* Footer melhorado */
 footer {
     background: linear-gradient(to right, #2a5298, #1e3c72);
-    padding: 20px;
+    padding: 40px 20px;
     text-align: center;
     box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 250px;
+    margin-bottom: 20px;
+    padding: 0 15px;
+}
+
+.footer-section h3 {
+    color: #ffd700;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.footer-links {
+    list-style: none;
+}
+
+.footer-links li {
+    margin-bottom: 10px;
+}
+
+.footer-links a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: #ffd700;
+    text-decoration: underline;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.social-icons a {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s;
+}
+
+.social-icons a:hover {
+    background: #ffd700;
+    transform: translateY(-3px);
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.footer-bottom p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 footer p {
@@ -243,6 +358,7 @@ footer a:hover {
         width: 100%;
         background: #1e3c72;
         padding: 20px 0;
+        order: 4;
     }
 
     .menu.show {
@@ -256,6 +372,26 @@ footer a:hover {
 
     form {
         max-width: 100%;
+    }
+
+    .logo-text {
+        font-size: 1.5rem;
+    }
+    
+    .logo-text::after {
+        display: none;
+    }
+    
+    nav {
+        flex-wrap: wrap;
+    }
+    
+    .menu-toggle {
+        order: 3;
+    }
+    
+    .footer-section {
+        flex: 100%;
     }
 }
 
@@ -301,7 +437,7 @@ footer a:hover {
     color: #aaa;
 }
 
-.close-modal:hover {
+close-modal:hover {
     color: #333;
 }
 

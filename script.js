@@ -8,6 +8,20 @@ function toggleMenu() {
 
 document.addEventListener('DOMContentLoaded', function () {
     const menuToggle = document.querySelector('.menu-toggle');
+    const menu = document.querySelector('.menu');
+
+    // Código para o menu hamburguer
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function () {
+            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+            menuToggle.setAttribute('aria-expanded', !isExpanded);
+            menu.setAttribute('aria-hidden', isExpanded);
+
+            // Adiciona ou remove a classe show para exibir/ocultar o menu
+            menu.classList.toggle('show');
+        });
+    }
+
     const evangelicalRadios = document.querySelectorAll('input[name="evangelical"]');
     const churchSection = document.getElementById('churchSection');
     const visitorForm = document.getElementById('visitorForm');
