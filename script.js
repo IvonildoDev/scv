@@ -114,8 +114,36 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (clearHistoryButton) {
         clearHistoryButton.addEventListener('click', () => {
-            localStorage.removeItem('visitors');
-            displayVisitorsDiv.innerHTML = '';
+            // Mostrar modal personalizado em vez do confirm padrão do navegador
+            const modal = document.getElementById('confirmationModal');
+            modal.style.display = 'flex';
+
+            // Manipular botão de fechar
+            const closeButton = document.querySelector('.close-modal');
+            closeButton.onclick = function () {
+                modal.style.display = 'none';
+            }
+
+            // Manipular botão de cancelar
+            const cancelButton = document.getElementById('cancelDelete');
+            cancelButton.onclick = function () {
+                modal.style.display = 'none';
+            }
+
+            // Manipular botão de confirmar
+            const confirmButton = document.getElementById('confirmDelete');
+            confirmButton.onclick = function () {
+                localStorage.removeItem('visitors');
+                displayVisitors();
+                modal.style.display = 'none';
+            }
+
+            // Fechar o modal ao clicar fora dele
+            window.onclick = function (event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            }
         });
     }
 
