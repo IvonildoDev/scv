@@ -1,20 +1,19 @@
+// Executar quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', function () {
-    // Sidebar toggle - Correção para garantir que o menu hambúrguer funcione
+    console.log('DOM carregado');
+
+    // Sidebar toggle - código comum para todas as páginas
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
     const menuToggle = document.getElementById('menuToggle');
 
-    console.log('Menu toggle element:', menuToggle); // Para debug
-
     if (menuToggle) {
         menuToggle.addEventListener('click', function (e) {
-            e.preventDefault(); // Previne comportamento padrão
-            e.stopPropagation(); // Impede propagação do evento
-
-            console.log('Menu toggle clicked'); // Para debug
-
+            e.preventDefault();
+            e.stopPropagation();
             sidebar.classList.toggle('active');
             mainContent.classList.toggle('sidebar-active');
+            console.log('Menu toggle clicked');
         });
     }
 
@@ -26,22 +25,67 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Inicialização específica da página de cadastro de visitantes
-    if (document.getElementById('visitorForm')) {
-        initVisitorPage();
-    }
-
-    // Verificar qual página está sendo carregada
-    const currentPage = window.location.pathname.split('/').pop();
-
-    // Inicializar a página apropriada
-    if (currentPage === 'listavisitantes.html') {
-        initListPage();
-    }
+    // Detectar qual página está sendo visualizada
+    detectCurrentPage();
 });
 
-function initVisitorPage() {
-    // Carregar visitantes ao iniciar
+// Detectar a página atual
+function detectCurrentPage() {
+    // Verifica elementos específicos para identificar cada página
+    if (document.getElementById('visitorsList')) {
+        console.log('Página de lista de visitantes detectada');
+        initVisitorsListPage();
+    } else if (document.getElementById('visitorForm')) {
+        console.log('Página de cadastro de visitantes detectada');
+        initVisitorFormPage();
+    }
+    // Adicione mais condições para outras páginas conforme necessário
+}
+
+// Inicializa a página de lista de visitantes
+function initVisitorsListPage() {
+    console.log('Inicializando página de lista de visitantes');
+
+    // Exibe a lista de visitantes imediatamente
+    displayVisitorsList();
+
+    // Adiciona eventos para os botões - Mantem os event listeners aqui também
+    // para garantir dupla camada de segurança
+    const searchButton = document.getElementById('searchButton');
+    if (searchButton) {
+        searchButton.addEventListener('click', function () {
+            searchVisitors();
+            console.log('Botão de busca clicado');
+        });
+    }
+
+    const searchInput = document.getElementById('searchVisitor');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function (event) {
+            if (event.key === 'Enter') {
+                searchVisitors();
+                console.log('Enter pressionado na busca');
+            }
+        });
+    }
+
+    // Usar método direto para garantir que os handlers de evento sejam adicionados
+    document.getElementById('generatePDF').onclick = function () {
+        console.log('Botão gerar PDF clicado');
+        generatePDF();
+    };
+
+    document.getElementById('sharePDF').onclick = function () {
+        console.log('Botão compartilhar PDF clicado');
+        sharePDF();
+    };
+}
+
+// Inicializa a página de formulário de visitantes
+function initVisitorFormPage() {
+    console.log('Inicializando página de formulário de visitantes');
+
+    // Código para inicializar o formulário de cadastro
     displayVisitors();
 
     // Event listener para o formulário
@@ -96,6 +140,324 @@ function initVisitorPage() {
             document.getElementById('churchSection').style.display = 'none';
             document.getElementById('churchName').value = '';
         });
+    }
+}
+
+// Exibe a lista de visitantes
+function displayVisitorsList() {
+    console.log('Exibindo lista de visitantes');
+    const listContainer = document.getElementById('visitorsList');
+
+    // Verificar se o container existe
+    if (!listContainer) {
+        console.error('Container de lista não encontrado');
+        return;
+    }
+
+    // Obter visitantes do localStorage
+    let visitors = [];
+    try {
+        const visitorsJSON = localStorage.getItem('visitors');
+        if (visitorsJSON) {
+            visitors = JSON.parse(visitorsJSON);
+        }
+        console.log('Visitantes carregados:', visitors.length);
+    } catch (e) {
+        console.error('Erro ao carregar visitantes:', e);
+        listContainer.innerHTML = '<p class="no-data">Erro ao carregar dados. Por favor, tente novamente.</p>';
+        return;
+    }
+
+    // Verificar se há visitantes
+    if (!visitors || visitors.length === 0) {
+        console.log('Nenhum visitante encontrado');
+        listContainer.innerHTML = '<p class="no-data">Nenhum visitante cadastrado.</p>';
+        return;
+    }
+
+    // Construir HTML para os visitantes
+    let html = '';
+    visitors.forEach(visitor => {
+        html += `
+            <div class="visitor-card">
+                <div class="visitor-info">
+                    <h3>${visitor.name}</h3>
+                    <p><strong>Cidade:</strong> ${visitor.city}</p>
+                    <p><strong>Evangélico:</strong> ${visitor.evangelical}</p>
+                    ${visitor.evangelical === 'Sim' ? `<p><strong>Igreja:</strong> ${visitor.churchName || 'Não informada'}</p>` : ''}
+                    <p><strong>Data:</strong> ${visitor.date}</p>
+                </div>
+                <div class="visitor-actions">
+                    <button class="btn-edit" onclick="editVisitor(${visitor.id})">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button class="btn-delete" onclick="deleteVisitor(${visitor.id})">
+                        <i class="fas fa-trash-alt"></i> Excluir
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+
+    // Atualizar o conteúdo do container
+    listContainer.innerHTML = html;
+    console.log('Lista de visitantes atualizada');
+}
+
+// Função para buscar visitantes
+function searchVisitors() {
+    const searchTerm = document.getElementById('searchVisitor').value.toLowerCase();
+    const listContainer = document.getElementById('visitorsList');
+    let visitors = [];
+
+    try {
+        const visitorsJSON = localStorage.getItem('visitors');
+        if (visitorsJSON) {
+            visitors = JSON.parse(visitorsJSON);
+        }
+    } catch (e) {
+        console.error('Erro ao carregar visitantes:', e);
+        return;
+    }
+
+    if (!visitors || visitors.length === 0) {
+        listContainer.innerHTML = '<p class="no-data">Nenhum visitante cadastrado.</p>';
+        return;
+    }
+
+    const filteredVisitors = visitors.filter(visitor =>
+        visitor.name.toLowerCase().includes(searchTerm) ||
+        visitor.city.toLowerCase().includes(searchTerm)
+    );
+
+    if (filteredVisitors.length === 0) {
+        listContainer.innerHTML = '<p class="no-data">Nenhum visitante encontrado com esse termo.</p>';
+        return;
+    }
+
+    let html = '';
+    filteredVisitors.forEach(visitor => {
+        html += `
+            <div class="visitor-card">
+                <div class="visitor-info">
+                    <h3>${visitor.name}</h3>
+                    <p><strong>Cidade:</strong> ${visitor.city}</p>
+                    <p><strong>Evangélico:</strong> ${visitor.evangelical}</p>
+                    ${visitor.evangelical === 'Sim' ? `<p><strong>Igreja:</strong> ${visitor.churchName || 'Não informada'}</p>` : ''}
+                    <p><strong>Data:</strong> ${visitor.date}</p>
+                </div>
+                <div class="visitor-actions">
+                    <button class="btn-edit" onclick="editVisitor(${visitor.id})">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button class="btn-delete" onclick="deleteVisitor(${visitor.id})">
+                        <i class="fas fa-trash-alt"></i> Excluir
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+
+    listContainer.innerHTML = html;
+}
+
+// Função para editar visitante
+function editVisitor(id) {
+    window.location.href = `cadastrovisitantes.html?edit=${id}`;
+}
+
+// Função para excluir visitante
+function deleteVisitor(id) {
+    if (confirm('Tem certeza que deseja excluir este visitante?')) {
+        let visitors = [];
+        try {
+            const visitorsJSON = localStorage.getItem('visitors');
+            if (visitorsJSON) {
+                visitors = JSON.parse(visitorsJSON);
+            }
+        } catch (e) {
+            console.error('Erro ao carregar visitantes:', e);
+            return;
+        }
+
+        visitors = visitors.filter(visitor => visitor.id !== id);
+        localStorage.setItem('visitors', JSON.stringify(visitors));
+
+        displayVisitorsList();
+    }
+}
+
+// Função para gerar PDF
+function generatePDF() {
+    // Verificar se jsPDF está disponível
+    if (!window.jspdf) {
+        alert('Biblioteca PDF não carregada. Por favor, atualize a página.');
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Título
+    doc.setFontSize(18);
+    doc.text('Lista de Visitantes - SCV', 14, 20);
+
+    // Data e hora
+    doc.setFontSize(12);
+    doc.text(`Gerado em: ${new Date().toLocaleString()}`, 14, 30);
+
+    // Obter dados de visitantes
+    let visitors = [];
+    try {
+        const visitorsJSON = localStorage.getItem('visitors');
+        if (visitorsJSON) {
+            visitors = JSON.parse(visitorsJSON);
+        }
+    } catch (e) {
+        console.error('Erro ao carregar visitantes:', e);
+        doc.text('Erro ao carregar dados de visitantes.', 14, 50);
+        doc.save('visitantes.pdf');
+        return;
+    }
+
+    if (!visitors || visitors.length === 0) {
+        doc.text('Nenhum visitante cadastrado.', 14, 50);
+        doc.save('visitantes.pdf');
+        return;
+    }
+
+    // Preparar dados para a tabela
+    const tableColumn = ["Nome", "Cidade", "Evangélico", "Igreja", "Data de Cadastro"];
+    const tableRows = [];
+
+    visitors.forEach(visitor => {
+        const visitorData = [
+            visitor.name,
+            visitor.city,
+            visitor.evangelical,
+            visitor.evangelical === 'Sim' ? (visitor.churchName || 'Não informada') : 'N/A',
+            visitor.date
+        ];
+        tableRows.push(visitorData);
+    });
+
+    // Adicionar tabela ao PDF
+    doc.autoTable({
+        head: [tableColumn],
+        body: tableRows,
+        startY: 40,
+        styles: { fontSize: 10, cellPadding: 3 },
+        headStyles: { fillColor: [42, 82, 152], textColor: 255 }
+    });
+
+    // Salvar PDF
+    doc.save('visitantes.pdf');
+}
+
+// Função para compartilhar PDF
+function sharePDF() {
+    // Verificar se jsPDF está disponível
+    if (!window.jspdf) {
+        alert('Biblioteca PDF não carregada. Por favor, atualize a página.');
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Título
+    doc.setFontSize(18);
+    doc.text('Lista de Visitantes - SCV', 14, 20);
+
+    // Data e hora
+    doc.setFontSize(12);
+    doc.text(`Gerado em: ${new Date().toLocaleString()}`, 14, 30);
+
+    // Obter dados de visitantes
+    let visitors = [];
+    try {
+        const visitorsJSON = localStorage.getItem('visitors');
+        if (visitorsJSON) {
+            visitors = JSON.parse(visitorsJSON);
+        }
+    } catch (e) {
+        console.error('Erro ao carregar visitantes:', e);
+        alert('Erro ao carregar dados de visitantes.');
+        return;
+    }
+
+    if (!visitors || visitors.length === 0) {
+        doc.text('Nenhum visitante cadastrado.', 14, 50);
+        shareFile(doc);
+        return;
+    }
+
+    // Preparar dados para a tabela
+    const tableColumn = ["Nome", "Cidade", "Evangélico", "Igreja", "Data de Cadastro"];
+    const tableRows = [];
+
+    visitors.forEach(visitor => {
+        const visitorData = [
+            visitor.name,
+            visitor.city,
+            visitor.evangelical,
+            visitor.evangelical === 'Sim' ? (visitor.churchName || 'Não informada') : 'N/A',
+            visitor.date
+        ];
+        tableRows.push(visitorData);
+    });
+
+    // Adicionar tabela ao PDF
+    doc.autoTable({
+        head: [tableColumn],
+        body: tableRows,
+        startY: 40,
+        styles: { fontSize: 10, cellPadding: 3 },
+        headStyles: { fillColor: [42, 82, 152], textColor: 255 }
+    });
+
+    // Compartilhar o PDF
+    shareFile(doc);
+}
+
+// Função auxiliar para compartilhar arquivo
+function shareFile(doc) {
+    // Criar arquivo blob do PDF
+    const pdfBlob = doc.output('blob');
+    const pdfFile = new File([pdfBlob], 'visitantes.pdf', { type: 'application/pdf' });
+
+    // Verificar se a API Web Share está disponível
+    if (navigator.share && navigator.canShare({ files: [pdfFile] })) {
+        navigator.share({
+            files: [pdfFile],
+            title: 'Lista de Visitantes - SCV',
+            text: 'Relatório de visitantes gerado pelo SCV'
+        })
+            .catch((error) => {
+                console.log('Erro ao compartilhar:', error);
+                doc.save('visitantes.pdf');
+            });
+    } else {
+        // Fallback: criar link para download se a API Web Share não estiver disponível
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+
+        // Opções de compartilhamento alternativas
+        if (confirm('Deseja enviar este PDF por e-mail?')) {
+            const emailSubject = encodeURIComponent('Lista de Visitantes - SCV');
+            const emailBody = encodeURIComponent('Segue em anexo a lista de visitantes.');
+            window.location.href = `mailto:?subject=${emailSubject}&body=${emailBody}`;
+
+            alert('Após enviar o e-mail, não se esqueça de anexar o PDF que será baixado agora.');
+        }
+
+        // Fazer download do arquivo
+        const tempLink = document.createElement('a');
+        tempLink.href = pdfUrl;
+        tempLink.download = 'visitantes.pdf';
+        tempLink.click();
+
+        // Limpar URL temporária
+        URL.revokeObjectURL(pdfUrl);
     }
 }
 
@@ -168,333 +530,4 @@ function displayVisitors() {
 
     html += '</div>';
     displayDiv.innerHTML = html;
-}
-
-/**
- * Edita um visitante existente
- * @param {number} id - ID do visitante a ser editado
- */
-function editVisitor(id) {
-    const visitors = JSON.parse(localStorage.getItem('visitors')) || [];
-    const visitor = visitors.find(v => v.id === id);
-
-    if (visitor) {
-        document.getElementById('name').value = visitor.name;
-        document.getElementById('city').value = visitor.city;
-
-        if (visitor.evangelical === 'Sim') {
-            document.getElementById('evangelicalYes').checked = true;
-            document.getElementById('churchSection').style.display = 'block';
-            document.getElementById('churchName').value = visitor.churchName;
-        } else {
-            document.getElementById('evangelicalNo').checked = true;
-            document.getElementById('churchSection').style.display = 'none';
-        }
-
-        deleteVisitor(id, false);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-}
-
-/**
- * Exclui um visitante
- * @param {number} id - ID do visitante a ser excluído
- * @param {boolean} askConfirmation - Define se deve pedir confirmação
- */
-function deleteVisitor(id, askConfirmation = true) {
-    if (askConfirmation && !confirm('Tem certeza que deseja excluir este visitante?')) {
-        return;
-    }
-
-    let visitors = JSON.parse(localStorage.getItem('visitors')) || [];
-    visitors = visitors.filter(visitor => visitor.id !== id);
-    localStorage.setItem('visitors', JSON.stringify(visitors));
-
-    displayVisitors();
-}
-
-// Função para inicializar a página de lista de visitantes
-function initListPage() {
-    // Evento de busca
-    document.getElementById('searchButton').addEventListener('click', function () {
-        searchVisitors();
-    });
-
-    document.getElementById('searchVisitor').addEventListener('keyup', function (event) {
-        if (event.key === 'Enter') {
-            searchVisitors();
-        }
-    });
-
-    // Eventos para os botões de exportação
-    document.getElementById('generatePDF').addEventListener('click', function () {
-        generatePDF();
-    });
-
-    document.getElementById('sharePDF').addEventListener('click', function () {
-        sharePDF();
-    });
-
-    // Exibe a lista inicial de visitantes
-    displayVisitorsList();
-}
-
-// Função para exibir a lista de visitantes
-function displayVisitorsList() {
-    const listContainer = document.getElementById('visitorsList');
-    if (!listContainer) return;
-
-    const visitors = JSON.parse(localStorage.getItem('visitors')) || [];
-
-    if (visitors.length === 0) {
-        listContainer.innerHTML = '<p class="no-data">Nenhum visitante cadastrado.</p>';
-        return;
-    }
-
-    let html = '';
-
-    visitors.forEach(visitor => {
-        html += `
-            <div class="visitor-card">
-                <div class="visitor-info">
-                    <h3>${visitor.name}</h3>
-                    <p><strong>Cidade:</strong> ${visitor.city}</p>
-                    <p><strong>Evangélico:</strong> ${visitor.evangelical}</p>
-                    ${visitor.evangelical === 'Sim' ? `<p><strong>Igreja:</strong> ${visitor.churchName}</p>` : ''}
-                    <p><strong>Data:</strong> ${visitor.date}</p>
-                </div>
-                <div class="visitor-actions">
-                    <button class="btn-edit" onclick="editVisitor(${visitor.id})">
-                        <i class="fas fa-edit"></i> Editar
-                    </button>
-                    <button class="btn-delete" onclick="deleteVisitor(${visitor.id})">
-                        <i class="fas fa-trash-alt"></i> Excluir
-                    </button>
-                </div>
-            </div>
-        `;
-    });
-
-    listContainer.innerHTML = html;
-}
-
-// Função para buscar visitantes
-function searchVisitors() {
-    const searchTerm = document.getElementById('searchVisitor').value.toLowerCase();
-    const listContainer = document.getElementById('visitorsList');
-    if (!listContainer) return;
-
-    const visitors = JSON.parse(localStorage.getItem('visitors')) || [];
-
-    if (visitors.length === 0) {
-        listContainer.innerHTML = '<p class="no-data">Nenhum visitante cadastrado.</p>';
-        return;
-    }
-
-    const filteredVisitors = visitors.filter(visitor =>
-        visitor.name.toLowerCase().includes(searchTerm) ||
-        visitor.city.toLowerCase().includes(searchTerm)
-    );
-
-    if (filteredVisitors.length === 0) {
-        listContainer.innerHTML = '<p class="no-data">Nenhum visitante encontrado com esse termo.</p>';
-        return;
-    }
-
-    let html = '';
-
-    filteredVisitors.forEach(visitor => {
-        html += `
-            <div class="visitor-card">
-                <div class="visitor-info">
-                    <h3>${visitor.name}</h3>
-                    <p><strong>Cidade:</strong> ${visitor.city}</p>
-                    <p><strong>Evangélico:</strong> ${visitor.evangelical}</p>
-                    ${visitor.evangelical === 'Sim' ? `<p><strong>Igreja:</strong> ${visitor.churchName}</p>` : ''}
-                    <p><strong>Data:</strong> ${visitor.date}</p>
-                </div>
-                <div class="visitor-actions">
-                    <button class="btn-edit" onclick="editVisitor(${visitor.id})">
-                        <i class="fas fa-edit"></i> Editar
-                    </button>
-                    <button class="btn-delete" onclick="deleteVisitor(${visitor.id})">
-                        <i class="fas fa-trash-alt"></i> Excluir
-                    </button>
-                </div>
-            </div>
-        `;
-    });
-
-    listContainer.innerHTML = html;
-}
-
-// Função para gerar PDF
-function generatePDF() {
-    // Usando a biblioteca jsPDF
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    // Título
-    doc.setFontSize(18);
-    doc.text('Lista de Visitantes - SCV', 14, 20);
-
-    // Data e hora
-    doc.setFontSize(12);
-    doc.text(`Gerado em: ${new Date().toLocaleString()}`, 14, 30);
-
-    // Obter dados de visitantes
-    const visitors = JSON.parse(localStorage.getItem('visitors')) || [];
-
-    if (visitors.length === 0) {
-        doc.text('Nenhum visitante cadastrado.', 14, 50);
-        doc.save('visitantes.pdf');
-        return;
-    }
-
-    // Preparar dados para a tabela
-    const tableColumn = ["Nome", "Cidade", "Evangélico", "Igreja", "Data de Cadastro"];
-    const tableRows = [];
-
-    visitors.forEach(visitor => {
-        const visitorData = [
-            visitor.name,
-            visitor.city,
-            visitor.evangelical,
-            visitor.evangelical === 'Sim' ? visitor.churchName : 'N/A',
-            visitor.date
-        ];
-        tableRows.push(visitorData);
-    });
-
-    // Adicionar tabela ao PDF
-    doc.autoTable({
-        head: [tableColumn],
-        body: tableRows,
-        startY: 40,
-        styles: {
-            fontSize: 10,
-            cellPadding: 3,
-            lineColor: [0, 0, 0],
-            lineWidth: 0.1,
-        },
-        headStyles: {
-            fillColor: [42, 82, 152],
-            textColor: 255,
-            fontStyle: 'bold'
-        },
-        alternateRowStyles: {
-            fillColor: [240, 240, 240]
-        }
-    });
-
-    // Salvar PDF
-    doc.save('visitantes.pdf');
-}
-
-// Função para compartilhar PDF
-function sharePDF() {
-    // Usando a biblioteca jsPDF
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    // Título
-    doc.setFontSize(18);
-    doc.text('Lista de Visitantes - SCV', 14, 20);
-
-    // Data e hora
-    doc.setFontSize(12);
-    doc.text(`Gerado em: ${new Date().toLocaleString()}`, 14, 30);
-
-    // Obter dados de visitantes
-    const visitors = JSON.parse(localStorage.getItem('visitors')) || [];
-
-    if (visitors.length === 0) {
-        doc.text('Nenhum visitante cadastrado.', 14, 50);
-        shareFile(doc);
-        return;
-    }
-
-    // Preparar dados para a tabela
-    const tableColumn = ["Nome", "Cidade", "Evangélico", "Igreja", "Data de Cadastro"];
-    const tableRows = [];
-
-    visitors.forEach(visitor => {
-        const visitorData = [
-            visitor.name,
-            visitor.city,
-            visitor.evangelical,
-            visitor.evangelical === 'Sim' ? visitor.churchName : 'N/A',
-            visitor.date
-        ];
-        tableRows.push(visitorData);
-    });
-
-    // Adicionar tabela ao PDF
-    doc.autoTable({
-        head: [tableColumn],
-        body: tableRows,
-        startY: 40,
-        styles: {
-            fontSize: 10,
-            cellPadding: 3,
-            lineColor: [0, 0, 0],
-            lineWidth: 0.1,
-        },
-        headStyles: {
-            fillColor: [42, 82, 152],
-            textColor: 255,
-            fontStyle: 'bold'
-        },
-        alternateRowStyles: {
-            fillColor: [240, 240, 240]
-        }
-    });
-
-    // Compartilhar o PDF
-    shareFile(doc);
-}
-
-// Função auxiliar para compartilhar arquivo
-function shareFile(doc) {
-    // Criar arquivo blob do PDF
-    const pdfBlob = doc.output('blob');
-    const pdfFile = new File([pdfBlob], 'visitantes.pdf', { type: 'application/pdf' });
-
-    // Verificar se a API Web Share está disponível
-    if (navigator.share && navigator.canShare({ files: [pdfFile] })) {
-        navigator.share({
-            files: [pdfFile],
-            title: 'Lista de Visitantes - SCV',
-            text: 'Relatório de visitantes gerado pelo Sistema de Cadastro de Visitantes'
-        })
-            .then(() => console.log('Compartilhamento bem-sucedido'))
-            .catch((error) => {
-                console.log('Erro ao compartilhar:', error);
-                // Fallback: fazer download do PDF se o compartilhamento falhar
-                doc.save('visitantes.pdf');
-            });
-    } else {
-        // Fallback: criar link para download se a API Web Share não estiver disponível
-        const pdfUrl = URL.createObjectURL(pdfBlob);
-
-        // Criar link temporário para download
-        const tempLink = document.createElement('a');
-        tempLink.href = pdfUrl;
-        tempLink.download = 'visitantes.pdf';
-
-        // Exibir opções de compartilhamento por e-mail
-        if (confirm('Deseja enviar este PDF por e-mail?')) {
-            const emailSubject = encodeURIComponent('Lista de Visitantes - SCV');
-            const emailBody = encodeURIComponent('Segue em anexo a lista de visitantes gerada pelo Sistema de Cadastro de Visitantes.');
-            window.location.href = `mailto:?subject=${emailSubject}&body=${emailBody}`;
-
-            alert('Após enviar o e-mail, não se esqueça de anexar o PDF que será baixado agora.');
-        }
-
-        // Fazer download do arquivo
-        tempLink.click();
-
-        // Limpar URL temporária
-        URL.revokeObjectURL(pdfUrl);
-    }
 }

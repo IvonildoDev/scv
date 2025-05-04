@@ -39,15 +39,16 @@
 
         <div class="search-container">
             <input type="text" id="searchVisitor" placeholder="Buscar visitante..." class="search-input">
-            <button id="searchButton" class="search-button"><i class="fas fa-search"></i></button>
+            <button id="searchButton" class="search-button" onclick="searchVisitors()"><i
+                    class="fas fa-search"></i></button>
         </div>
 
         <!-- Botões de exportação -->
         <div class="export-buttons">
-            <button id="generatePDF" class="btn-export btn-pdf">
+            <button id="generatePDF" class="btn-export btn-pdf" onclick="generatePDF()">
                 <i class="fas fa-file-pdf"></i> Gerar PDF
             </button>
-            <button id="sharePDF" class="btn-export btn-share">
+            <button id="sharePDF" class="btn-export btn-share" onclick="sharePDF()">
                 <i class="fas fa-share-alt"></i> Compartilhar
             </button>
         </div>
@@ -63,7 +64,71 @@
         </div>
     </footer>
 
-    <!-- Script principal -->
+    <script>
+        // Script para garantir que a lista de visitantes seja carregada
+        document.addEventListener('DOMContentLoaded', function () {
+            // Função para exibir lista de visitantes
+            function mostrarVisitantes() {
+                const listContainer = document.getElementById('visitorsList');
+                if (!listContainer) return;
+
+                // Obter visitantes do localStorage
+                let visitors = [];
+                try {
+                    const visitorsData = localStorage.getItem('visitors');
+                    if (visitorsData) {
+                        visitors = JSON.parse(visitorsData);
+                        console.log('Visitantes encontrados:', visitors.length);
+                    } else {
+                        console.log('Nenhum dado de visitantes no localStorage');
+                    }
+                } catch (e) {
+                    console.error('Erro ao carregar visitantes:', e);
+                    listContainer.innerHTML = '<p class="no-data">Erro ao carregar dados.</p>';
+                    return;
+                }
+
+                // Verificar se há visitantes
+                if (!visitors || visitors.length === 0) {
+                    listContainer.innerHTML = '<p class="no-data">Nenhum visitante cadastrado.</p>';
+                    return;
+                }
+
+                // Construir HTML para os visitantes
+                let html = '';
+                visitors.forEach(visitor => {
+                    html += `
+                        <div class="visitor-card">
+                            <div class="visitor-info">
+                                <h3>${visitor.name}</h3>
+                                <p><strong>Cidade:</strong> ${visitor.city}</p>
+                                <p><strong>Evangélico:</strong> ${visitor.evangelical}</p>
+                                ${visitor.evangelical === 'Sim' ? `<p><strong>Igreja:</strong> ${visitor.churchName || 'Não informada'}</p>` : ''}
+                                <p><strong>Data:</strong> ${visitor.date}</p>
+                            </div>
+                            <div class="visitor-actions">
+                                <button class="btn-edit" onclick="editVisitor(${visitor.id})">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button class="btn-delete" onclick="deleteVisitor(${visitor.id})">
+                                    <i class="fas fa-trash-alt"></i> Excluir
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                // Atualizar o conteúdo do container
+                listContainer.innerHTML = html;
+                console.log('Lista de visitantes atualizada com sucesso');
+            }
+
+            // Chamar função para mostrar visitantes
+            mostrarVisitantes();
+        });
+    </script>
+
+    <!-- Script externo -->
     <script src="script.js"></script>
 </body>
 
