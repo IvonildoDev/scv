@@ -10,63 +10,83 @@
 </head>
 
 <body>
-    <nav>
-        <div class="logo">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
             <span class="logo-text">SCV</span>
         </div>
-        <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
-        <ul class="menu" aria-hidden="true">
-            <li><a href="index.html">Início</a></li>
-            <li><a href="cadastrovisitantes.html">Cadastrar Visitante</a></li>
-            <li><a href="listavisitantes.html">Lista de Visitantes</a></li>
-            <li><a href="sobre.html">Sobre</a></li>
-            <li><a href="contato.html">Contato</a></li>
+        <ul class="sidebar-menu">
+            <li><a href="index.html"><i class="fas fa-home"></i> Início</a></li>
+            <li><a href="cadastrovisitantes.html"><i class="fas fa-user-plus"></i> Cadastrar Visitante</a></li>
+            <li><a href="listavisitantes.html"><i class="fas fa-list"></i> Lista de Visitantes</a></li>
+            <li><a href="sobre.html" class="active"><i class="fas fa-info-circle"></i> Sobre</a></li>
+            <li><a href="contato.html"><i class="fas fa-envelope"></i> Contato</a></li>
         </ul>
-    </nav>
-    <main>
-        <h1>Sobre o Sistema</h1>
-        <p>O Sistema de Cadastro de Visitantes (SCV) é mais do que uma ferramenta — é uma ponte que conecta pessoas,
-            histórias e propósitos. Desenvolvido com paixão e inovação, nosso objetivo é simplificar a gestão de
-            visitantes, oferecendo uma solução prática, segura e moderna para registrar e organizar cada presença com
-            cuidado e eficiência.</p>
-        <p>Com tecnologias de ponta, garantimos a proteção dos dados e uma experiência fluida para quem utiliza. Seja
-            para igrejas, eventos ou comunidades, o SCV foi pensado para facilitar o dia a dia, permitindo que você
-            foque no que realmente importa: acolher .</p>
-        <p>Junte-se a nós nessa jornada de transformar registros em relações e dados em significado.</p>
-    </main>
-    <footer>
-        <div class="footer-container">
-            <div class="footer-section">
-                <h3>SCV</h3>
-                <p>Sistema de Cadastro de Visitantes</p>
-                <p>Facilitando o registro e controle de visitantes de forma eficiente.</p>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <div class="header-title">Sobre</div>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div class="main-content" id="mainContent">
+        <div class="about-container">
+            <h1>Sobre o SCV</h1>
+
+            <div class="about-card">
+                <div class="about-icon">
+                    <i class="fas fa-church"></i>
+                </div>
+                <h2>Sistema de Cadastro de Visitantes</h2>
+                <p>O SCV (Sistema de Cadastro de Visitantes) foi desenvolvido para facilitar o registro e acompanhamento
+                    de visitantes em igrejas, templos e outros locais de culto.</p>
             </div>
-            <div class="footer-section">
-                <h3>Links Rápidos</h3>
-                <ul class="footer-links">
-                    <li><a href="index.html">Início</a></li>
-                    <li><a href="cadastrovisitantes.html">Cadastrar Visitante</a></li>
-                    <li><a href="listavisitantes.html">Lista de Visitantes</a></li>
-                    <li><a href="sobre.html">Sobre</a></li>
-                    <li><a href="contato.html">Contato</a></li>
+
+            <div class="about-section">
+                <h3>Nossa Missão</h3>
+                <p>Facilitar o processo de acolhimento e acompanhamento de pessoas que visitam a igreja, fornecendo
+                    ferramentas simples e eficientes para o registro e controle de informações importantes.</p>
+
+                <h3>Funcionalidades</h3>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check-circle"></i> Cadastro rápido de visitantes</li>
+                    <li><i class="fas fa-check-circle"></i> Busca e filtros avançados</li>
+                    <li><i class="fas fa-check-circle"></i> Geração de relatórios em PDF</li>
+                    <li><i class="fas fa-check-circle"></i> Compartilhamento de dados</li>
+                    <li><i class="fas fa-check-circle"></i> Interface amigável e responsiva</li>
                 </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contato</h3>
-                <p>Email: contato@scv.com</p>
-                <p>Telefone: (00) 1234-5678</p>
-                <div class="social-icons">
-                    <a href="#"><i class="fa fa-facebook"></i></a>
-                    <a href="#"><i class="fa fa-twitter"></i></a>
-                    <a href="#"><i class="fa fa-instagram"></i></a>
+
+                <h3>Versão do Sistema</h3>
+                <p>Versão atual: 1.0.0 (Maio/2025)</p>
+
+                <div class="scripture-quote">
+                    <blockquote>
+                        "Portanto, acolhei-vos uns aos outros, como também Cristo nos acolheu para a glória de Deus."
+                    </blockquote>
+                    <cite>— Romanos 15:7</cite>
                 </div>
             </div>
+
+            <div class="about-footer">
+                <p>O SCV é um sistema desenvolvido com carinho para servir à comunidade cristã.</p>
+                <a href="contato.html" class="btn-action">
+                    <i class="fas fa-envelope"></i>
+                    <span>Entre em Contato</span>
+                </a>
+            </div>
         </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
         <div class="footer-bottom">
-            <p>&copy; 2025 SCV - Sistema de Cadastro de Visitantes. Todos os direitos reservados.</p>
+            <p>&copy; 2025 SCV - Sistema de Cadastro de Visitantes</p>
             <p>Desenvolvido por Ivonildo Lima</p>
         </div>
     </footer>
+
     <script src="script.js"></script>
 </body>
 

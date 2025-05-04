@@ -3,65 +3,67 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device=" width=device, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Visitantes - SCV</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Adicionar jsPDF para geração de PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
 
 <body>
-    <nav>
-        <div class="logo">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
             <span class="logo-text">SCV</span>
         </div>
-        <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
-        <ul class="menu" aria-hidden="true">
-            <li><a href="index.html">Início</a></li>
-            <li><a href="cadastrovisitantes.html">Cadastrar Visitante</a></li>
-            <li><a href="listavisitantes.html">Lista de Visitantes</a></li>
-            <li><a href="sobre.html">Sobre</a></li>
-            <li><a href="contato.html">Contato</a></li>
+        <ul class="sidebar-menu">
+            <li><a href="index.html"><i class="fas fa-home"></i> Início</a></li>
+            <li><a href="cadastrovisitantes.html"><i class="fas fa-user-plus"></i> Cadastrar Visitante</a></li>
+            <li><a href="listavisitantes.html" class="active"><i class="fas fa-list"></i> Lista de Visitantes</a></li>
+            <li><a href="sobre.html"><i class="fas fa-info-circle"></i> Sobre</a></li>
+            <li><a href="contato.html"><i class="fas fa-envelope"></i> Contato</a></li>
         </ul>
-    </nav>
-    <main>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <div class="header-title">Lista de Visitantes</div>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div class="main-content" id="mainContent">
         <h1>Lista de Visitantes</h1>
-        <button id="generatePDF">Gerar PDF</button>
-        <div id="displayVisitors"></div>
-    </main>
-    <footer>
-        <div class="footer-container">
-            <div class="footer-section">
-                <h3>SCV</h3>
-                <p>Sistema de Cadastro de Visitantes</p>
-                <p>Facilitando o registro e controle de visitantes de forma eficiente.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Links Rápidos</h3>
-                <ul class="footer-links">
-                    <li><a href="index.html">Início</a></li>
-                    <li><a href="cadastrovisitantes.html">Cadastrar Visitante</a></li>
-                    <li><a href="listavisitantes.html">Lista de Visitantes</a></li>
-                    <li><a href="sobre.html">Sobre</a></li>
-                    <li><a href="contato.html">Contato</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contato</h3>
-                <p>Email: contato@scv.com</p>
-                <p>Telefone: (00) 1234-5678</p>
-                <div class="social-icons">
-                    <a href="#"><i class="fa fa-facebook"></i></a>
-                    <a href="#"><i class="fa fa-twitter"></i></a>
-                    <a href="#"><i class="fa fa-instagram"></i></a>
-                </div>
-            </div>
+
+        <div class="search-container">
+            <input type="text" id="searchVisitor" placeholder="Buscar visitante..." class="search-input">
+            <button id="searchButton" class="search-button"><i class="fas fa-search"></i></button>
         </div>
+
+        <!-- Botões de exportação -->
+        <div class="export-buttons">
+            <button id="generatePDF" class="btn-export btn-pdf">
+                <i class="fas fa-file-pdf"></i> Gerar PDF
+            </button>
+            <button id="sharePDF" class="btn-export btn-share">
+                <i class="fas fa-share-alt"></i> Compartilhar
+            </button>
+        </div>
+
+        <div id="visitorsList" class="visitors-list"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
         <div class="footer-bottom">
-            <p>&copy; 2025 SCV - Sistema de Cadastro de Visitantes. Todos os direitos reservados.</p>
+            <p>&copy; 2025 SCV - Sistema de Cadastro de Visitantes</p>
             <p>Desenvolvido por Ivonildo Lima</p>
         </div>
     </footer>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+    <!-- Script principal -->
     <script src="script.js"></script>
 </body>
 

@@ -10,59 +10,121 @@
 </head>
 
 <body>
-    <nav>
-        <div class="logo">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
             <span class="logo-text">SCV</span>
         </div>
-        <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
-        <ul class="menu" aria-hidden="true">
-            <li><a href="index.html">Início</a></li>
-            <li><a href="cadastrovisitantes.html">Cadastrar Visitante</a></li>
-            <li><a href="listavisitantes.html">Lista de Visitantes</a></li>
-            <li><a href="sobre.html">Sobre</a></li>
-            <li><a href="contato.html">Contato</a></li>
+        <ul class="sidebar-menu">
+            <li><a href="index.html"><i class="fas fa-home"></i> Início</a></li>
+            <li><a href="cadastrovisitantes.html"><i class="fas fa-user-plus"></i> Cadastrar Visitante</a></li>
+            <li><a href="listavisitantes.html"><i class="fas fa-list"></i> Lista de Visitantes</a></li>
+            <li><a href="sobre.html"><i class="fas fa-info-circle"></i> Sobre</a></li>
+            <li><a href="contato.html" class="active"><i class="fas fa-envelope"></i> Contato</a></li>
         </ul>
-    </nav>
-    <main>
-        <h1>Contato</h1>
-        <p>Para mais informações, entre em contato conosco:</p>
-        <p>Email: <a href="mailto:suporte@scv.com">suporte@scv.com</a></p>
-        <p>Telefone: (11) 1234-5678</p>
-    </main>
-    <footer>
-        <div class="footer-container">
-            <div class="footer-section">
-                <h3>SCV</h3>
-                <p>Sistema de Cadastro de Visitantes</p>
-                <p>Facilitando o registro e controle de visitantes de forma eficiente.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Links Rápidos</h3>
-                <ul class="footer-links">
-                    <li><a href="index.html">Início</a></li>
-                    <li><a href="cadastrovisitantes.html">Cadastrar Visitante</a></li>
-                    <li><a href="listavisitantes.html">Lista de Visitantes</a></li>
-                    <li><a href="sobre.html">Sobre</a></li>
-                    <li><a href="contato.html">Contato</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contato</h3>
-                <p>Email: contato@scv.com</p>
-                <p>Telefone: (00) 1234-5678</p>
-                <div class="social-icons">
-                    <a href="#"><i class="fa fa-facebook"></i></a>
-                    <a href="#"><i class="fa fa-twitter"></i></a>
-                    <a href="#"><i class="fa fa-instagram"></i></a>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <div class="header-title">Contato</div>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div class="main-content" id="mainContent">
+        <div class="contact-container">
+            <h1>Entre em Contato</h1>
+
+            <div class="contact-methods">
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>E-mail</h3>
+                    <p>contato@scv.com.br</p>
+                    <a href="mailto:contato@scv.com.br" class="contact-link">Enviar e-mail</a>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h3>Telefone</h3>
+                    <p>(XX) XXXX-XXXX</p>
+                    <a href="tel:+55XXXXXXXXXX" class="contact-link">Ligar agora</a>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <h3>WhatsApp</h3>
+                    <p>(XX) XXXXX-XXXX</p>
+                    <a href="https://wa.me/55XXXXXXXXXXX" class="contact-link">Enviar mensagem</a>
                 </div>
             </div>
+
+            <div class="contact-form-container">
+                <h2>Formulário de Contato</h2>
+                <form id="contactForm" class="contact-form">
+                    <div class="form-group">
+                        <label for="name">Nome:</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">E-mail:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject">Assunto:</label>
+                        <input type="text" id="subject" name="subject" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Mensagem:</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+
+                    <div class="form-buttons">
+                        <button type="submit"><i class="fas fa-paper-plane"></i> Enviar Mensagem</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="contact-footer">
+                <p>Estamos ansiosos para receber seu feedback e responder a todas as suas dúvidas sobre o SCV.</p>
+            </div>
         </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
         <div class="footer-bottom">
-            <p>&copy; 2025 SCV - Sistema de Cadastro de Visitantes. Todos os direitos reservados.</p>
+            <p>&copy; 2025 SCV - Sistema de Cadastro de Visitantes</p>
             <p>Desenvolvido por Ivonildo Lima</p>
         </div>
     </footer>
+
     <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Handler para o formulário de contato
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+
+                    // Aqui você pode adicionar o código para enviar o formulário via AJAX
+                    // ou qualquer outra lógica de processamento do formulário
+
+                    alert('Sua mensagem foi enviada com sucesso! Em breve entraremos em contato.');
+                    contactForm.reset();
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
