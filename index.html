@@ -4,61 +4,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Início - SCV</title>
+    <title>Início · SCV</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&display=swap">
+    <link rel="icon" href="logo.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
-<body>
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <span class="logo-text">SCV</span>
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="index.html" class="active"><i class="fas fa-home"></i> Início</a></li>
-            <li><a href="cadastrovisitantes.html"><i class="fas fa-user-plus"></i> Cadastrar Visitante</a></li>
-            <li><a href="listavisitantes.html"><i class="fas fa-list"></i> Lista de Visitantes</a></li>
-            <li><a href="sobre.html"><i class="fas fa-info-circle"></i> Sobre</a></li>
-            <li><a href="contato.html"><i class="fas fa-envelope"></i> Contato</a></li>
-        </ul>
-    </div>
+<body data-page="home" data-title="Início">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="overlay" id="overlay"></div>
 
-    <!-- Header -->
-    <div class="header">
-        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
-        <div class="header-title">Início</div>
-    </div>
+    <div class="content">
+        <header class="topbar" id="topbar"></header>
 
-    <!-- Conteúdo principal -->
-    <div class="main-content" id="mainContent">
-        <div class="welcome-section">
-            <h1>Bem-vindo ao Sistema de Cadastro de Visitantes</h1>
-            <div class="scripture">
-                <h2>Salmos 122:1</h2>
-                <p>Alegrei-me quando me disseram:<br>Vamos à Casa do Senhor!</p>
+        <main>
+            <div class="page-head">
+                <h1>Visitantes</h1>
+                <p>Registre quem nos visita e acompanhe o movimento.</p>
             </div>
 
-            <div class="action-buttons">
-                <a href="cadastrovisitantes.html" class="btn-action">
-                    <i class="fas fa-user-plus"></i>
-                    <span>Cadastrar Visitante</span>
-                </a>
-                <a href="listavisitantes.html" class="btn-action">
-                    <i class="fas fa-list"></i>
-                    <span>Ver Visitantes</span>
-                </a>
-            </div>
-        </div>
-    </div>
+            <blockquote class="verse">
+                Alegrei-me quando me disseram: Vamos à Casa do Senhor!
+                <cite>Salmos 122:1</cite>
+            </blockquote>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-bottom">
-            <p>&copy; 2025 SCV - Sistema de Cadastro de Visitantes</p>
-            <p>Desenvolvido por Ivonildo Lima</p>
-        </div>
-    </footer>
+            <div class="stats">
+                <div class="stat"><b id="statTotal">0</b><span>Total de visitantes</span></div>
+                <div class="stat"><b id="statMonth">0</b><span>Cadastrados neste mês</span></div>
+                <div class="stat"><b id="statEvangelical">0</b><span>Já são evangélicos</span></div>
+            </div>
+
+            <div class="quick">
+                <a class="btn btn-primary" href="cadastrovisitantes.html"><span data-icon="plus"></span>Cadastrar
+                    visitante</a>
+                <a class="btn btn-ghost" href="listavisitantes.html"><span data-icon="users"></span>Ver todos</a>
+            </div>
+
+            <div class="section-head">
+                <h2>Últimos cadastros</h2>
+            </div>
+            <div class="table-wrap" id="recent"></div>
+        </main>
+    </div>
 
     <script src="script.js"></script>
 </body>

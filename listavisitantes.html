@@ -4,131 +4,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Visitantes - SCV</title>
+    <title>Visitantes · SCV</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&display=swap">
+    <link rel="icon" href="logo.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- Adicionar jsPDF para geração de PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
 
-<body>
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <span class="logo-text">SCV</span>
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="index.html"><i class="fas fa-home"></i> Início</a></li>
-            <li><a href="cadastrovisitantes.html"><i class="fas fa-user-plus"></i> Cadastrar Visitante</a></li>
-            <li><a href="listavisitantes.html" class="active"><i class="fas fa-list"></i> Lista de Visitantes</a></li>
-            <li><a href="sobre.html"><i class="fas fa-info-circle"></i> Sobre</a></li>
-            <li><a href="contato.html"><i class="fas fa-envelope"></i> Contato</a></li>
-        </ul>
+<body data-page="lista" data-title="Visitantes">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="overlay" id="overlay"></div>
+
+    <div class="content">
+        <header class="topbar" id="topbar"></header>
+
+        <main>
+            <div class="page-head">
+                <h1>Visitantes</h1>
+                <p>Todos os visitantes cadastrados, do mais recente ao mais antigo.</p>
+            </div>
+
+            <div class="toolbar">
+                <div class="search">
+                    <span data-icon="search"></span>
+                    <input type="search" id="searchVisitor" placeholder="Buscar por nome, cidade ou igreja" aria-label="Buscar visitante">
+                </div>
+                <span class="spacer"></span>
+                <button class="btn btn-ghost" id="generatePDF"><span data-icon="download"></span>Baixar PDF</button>
+                <button class="btn btn-ghost" id="sharePDF"><span data-icon="share"></span>Compartilhar</button>
+                <button class="btn btn-quiet-danger" id="clearAll"><span data-icon="trash"></span>Apagar tudo</button>
+            </div>
+
+            <p class="count" id="count" aria-live="polite"></p>
+
+            <div class="table-wrap" id="tableWrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Cidade</th>
+                            <th>Igreja</th>
+                            <th>Cadastro</th>
+                            <th><span class="sr-only">Ações</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="rows"></tbody>
+                </table>
+            </div>
+            <div class="table-wrap empty" id="emptyState" hidden></div>
+        </main>
     </div>
 
-    <!-- Header -->
-    <div class="header">
-        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
-        <div class="header-title">Lista de Visitantes</div>
-    </div>
-
-    <!-- Conteúdo principal -->
-    <div class="main-content" id="mainContent">
-        <h1>Lista de Visitantes</h1>
-
-        <div class="search-container">
-            <input type="text" id="searchVisitor" placeholder="Buscar visitante..." class="search-input">
-            <button id="searchButton" class="search-button" onclick="searchVisitors()"><i
-                    class="fas fa-search"></i></button>
-        </div>
-
-        <!-- Botões de exportação -->
-        <div class="export-buttons">
-            <button id="generatePDF" class="btn-export btn-pdf" onclick="generatePDF()">
-                <i class="fas fa-file-pdf"></i> Gerar PDF
-            </button>
-            <button id="sharePDF" class="btn-export btn-share" onclick="sharePDF()">
-                <i class="fas fa-share-alt"></i> Compartilhar
-            </button>
-        </div>
-
-        <div id="visitorsList" class="visitors-list"></div>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-bottom">
-            <p>&copy; 2025 SCV - Sistema de Cadastro de Visitantes</p>
-            <p>Desenvolvido por Ivonildo Lima</p>
-        </div>
-    </footer>
-
-    <script>
-        // Script para garantir que a lista de visitantes seja carregada
-        document.addEventListener('DOMContentLoaded', function () {
-            // Função para exibir lista de visitantes
-            function mostrarVisitantes() {
-                const listContainer = document.getElementById('visitorsList');
-                if (!listContainer) return;
-
-                // Obter visitantes do localStorage
-                let visitors = [];
-                try {
-                    const visitorsData = localStorage.getItem('visitors');
-                    if (visitorsData) {
-                        visitors = JSON.parse(visitorsData);
-                        console.log('Visitantes encontrados:', visitors.length);
-                    } else {
-                        console.log('Nenhum dado de visitantes no localStorage');
-                    }
-                } catch (e) {
-                    console.error('Erro ao carregar visitantes:', e);
-                    listContainer.innerHTML = '<p class="no-data">Erro ao carregar dados.</p>';
-                    return;
-                }
-
-                // Verificar se há visitantes
-                if (!visitors || visitors.length === 0) {
-                    listContainer.innerHTML = '<p class="no-data">Nenhum visitante cadastrado.</p>';
-                    return;
-                }
-
-                // Construir HTML para os visitantes
-                let html = '';
-                visitors.forEach(visitor => {
-                    html += `
-                        <div class="visitor-card">
-                            <div class="visitor-info">
-                                <h3>${visitor.name}</h3>
-                                <p><strong>Cidade:</strong> ${visitor.city}</p>
-                                <p><strong>Evangélico:</strong> ${visitor.evangelical}</p>
-                                ${visitor.evangelical === 'Sim' ? `<p><strong>Igreja:</strong> ${visitor.churchName || 'Não informada'}</p>` : ''}
-                                <p><strong>Data:</strong> ${visitor.date}</p>
-                            </div>
-                            <div class="visitor-actions">
-                                <button class="btn-edit" onclick="editVisitor(${visitor.id})">
-                                    <i class="fas fa-edit"></i> Editar
-                                </button>
-                                <button class="btn-delete" onclick="deleteVisitor(${visitor.id})">
-                                    <i class="fas fa-trash-alt"></i> Excluir
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                // Atualizar o conteúdo do container
-                listContainer.innerHTML = html;
-                console.log('Lista de visitantes atualizada com sucesso');
-            }
-
-            // Chamar função para mostrar visitantes
-            mostrarVisitantes();
-        });
-    </script>
-
-    <!-- Script externo -->
     <script src="script.js"></script>
 </body>
 

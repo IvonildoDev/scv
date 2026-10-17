@@ -1,687 +1,421 @@
-// Executar quando o DOM estiver carregado
-document.addEventListener('DOMContentLoaded', function () {
-    console.log('DOM carregado');
+/* SCV — Sistema de Cadastro de Visitantes */
 
-    // Sidebar toggle - código comum para todas as páginas
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('mainContent');
-    const menuToggle = document.getElementById('menuToggle');
-
-    if (menuToggle) {
-        menuToggle.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            sidebar.classList.toggle('active');
-            mainContent.classList.toggle('sidebar-active');
-            console.log('Menu toggle clicked');
-        });
-    }
-
-    // Fechando sidebar ao clicar fora
-    document.addEventListener('click', function (e) {
-        if (sidebar && !sidebar.contains(e.target) && e.target !== menuToggle && sidebar.classList.contains('active')) {
-            sidebar.classList.remove('active');
-            mainContent.classList.remove('sidebar-active');
-        }
-    });
-
-    // Detectar qual página está sendo visualizada
-    detectCurrentPage();
-});
-
-// Detectar a página atual
-function detectCurrentPage() {
-    // Verifica elementos específicos para identificar cada página
-    if (document.getElementById('visitorsList')) {
-        console.log('Página de lista de visitantes detectada');
-        initVisitorsListPage();
-    } else if (document.getElementById('visitorForm')) {
-        console.log('Página de cadastro de visitantes detectada');
-        initVisitorFormPage();
-    }
-    // Adicione mais condições para outras páginas conforme necessário
-}
-
-// Inicializa a página de lista de visitantes
-function initVisitorsListPage() {
-    console.log('Inicializando página de lista de visitantes');
-
-    // Exibe a lista de visitantes imediatamente
-    displayVisitorsList();
-
-    // Adiciona eventos para os botões - Mantem os event listeners aqui também
-    // para garantir dupla camada de segurança
-    const searchButton = document.getElementById('searchButton');
-    if (searchButton) {
-        searchButton.addEventListener('click', function () {
-            searchVisitors();
-            console.log('Botão de busca clicado');
-        });
-    }
-
-    const searchInput = document.getElementById('searchVisitor');
-    if (searchInput) {
-        searchInput.addEventListener('keyup', function (event) {
-            if (event.key === 'Enter') {
-                searchVisitors();
-                console.log('Enter pressionado na busca');
-            }
-        });
-    }
-
-    // Usar método direto para garantir que os handlers de evento sejam adicionados
-    document.getElementById('generatePDF').onclick = function () {
-        console.log('Botão gerar PDF clicado');
-        generatePDF();
-    };
-
-    document.getElementById('sharePDF').onclick = function () {
-        console.log('Botão compartilhar PDF clicado');
-        sharePDF();
-    };
-}
-
-// Inicializa a página de formulário de visitantes
-function initVisitorFormPage() {
-    console.log('Inicializando página de formulário de visitantes');
-
-    // Verificar se estamos no modo de edição
-    const urlParams = new URLSearchParams(window.location.search);
-    const editId = urlParams.get('edit');
-
-    if (editId) {
-        console.log('Modo de edição detectado para ID:', editId);
-        loadVisitorForEditing(parseInt(editId));
-    }
-
-    // Event listener para o formulário
-    document.getElementById('visitorForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        if (editId) {
-            // Se estiver editando, atualize o visitante
-            updateVisitor(parseInt(editId));
-        } else {
-            // Se for novo cadastro, salve como novo
-            saveVisitor();
-        }
-    });
-
-    // Mostrar/esconder o campo de igreja com base na seleção
-    const evangelicalYesRadio = document.getElementById('evangelicalYes');
-    if (evangelicalYesRadio) {
-        evangelicalYesRadio.addEventListener('change', function () {
-            document.getElementById('churchSection').style.display = 'block';
-        });
-    }
-
-    const evangelicalNoRadio = document.getElementById('evangelicalNo');
-    if (evangelicalNoRadio) {
-        evangelicalNoRadio.addEventListener('change', function () {
-            document.getElementById('churchSection').style.display = 'none';
-            document.getElementById('churchName').value = '';
-        });
-    }
-
-    // Exibe a lista de visitantes
-    displayVisitors();
-}
-
-// Função para carregar os dados do visitante para edição
-function loadVisitorForEditing(id) {
-    try {
-        console.log('Carregando visitante para edição...');
-        const visitors = JSON.parse(localStorage.getItem('visitors')) || [];
-        const visitor = visitors.find(v => v.id === id);
-
-        if (!visitor) {
-            console.error('Visitante não encontrado com ID:', id);
-            alert('Visitante não encontrado.');
-            return;
-        }
-
-        console.log('Visitante encontrado:', visitor);
-
-        // Preencher o formulário com os dados do visitante
-        document.getElementById('name').value = visitor.name;
-        document.getElementById('city').value = visitor.city;
-
-        // Selecionar o radio button correto
-        if (visitor.evangelical === 'Sim') {
-            document.getElementById('evangelicalYes').checked = true;
-            document.getElementById('churchSection').style.display = 'block';
-            document.getElementById('churchName').value = visitor.churchName || '';
-        } else {
-            document.getElementById('evangelicalNo').checked = true;
-            document.getElementById('churchSection').style.display = 'none';
-        }
-
-        // Alterar o texto do botão para "Atualizar"
-        const submitButton = document.querySelector('#visitorForm button[type="submit"]');
-        if (submitButton) {
-            submitButton.textContent = 'Atualizar Visitante';
-        }
-
-        // Adicionar uma classe para indicar que o formulário está em modo de edição
-        document.getElementById('visitorForm').classList.add('editing');
-
-        // Adicionar um título de edição
-        const formTitle = document.querySelector('.form-container h2');
-        if (formTitle) {
-            formTitle.textContent = 'Editar Visitante';
-        }
-    } catch (error) {
-        console.error('Erro ao carregar visitante para edição:', error);
-        alert('Erro ao carregar dados do visitante.');
-    }
-}
-
-// Função para atualizar um visitante existente
-function updateVisitor(id) {
-    try {
-        console.log('Atualizando visitante com ID:', id);
-        const name = document.getElementById('name').value;
-        const city = document.getElementById('city').value;
-        const evangelical = document.querySelector('input[name="evangelical"]:checked').value;
-        const churchName = evangelical === 'Sim' ? document.getElementById('churchName').value : '';
-
-        let visitors = JSON.parse(localStorage.getItem('visitors')) || [];
-
-        // Encontrar o índice do visitante
-        const index = visitors.findIndex(v => v.id === id);
-
-        if (index === -1) {
-            console.error('Visitante não encontrado para atualização');
-            alert('Erro ao atualizar: Visitante não encontrado.');
-            return;
-        }
-
-        // Manter a data original ou atualizar para a data atual
-        const originalDate = visitors[index].date;
-
-        // Atualizar os dados do visitante
-        visitors[index] = {
-            ...visitors[index],
-            name,
-            city,
-            evangelical,
-            churchName,
-            date: originalDate, // Manter a data original
-        };
-
-        // Salvar a lista atualizada
-        localStorage.setItem('visitors', JSON.stringify(visitors));
-
-        alert('Visitante atualizado com sucesso!');
-
-        // Resetar o formulário e voltar ao modo de cadastro
-        document.getElementById('visitorForm').reset();
-        document.getElementById('churchSection').style.display = 'none';
-
-        // Restaurar o texto do botão
-        const submitButton = document.querySelector('#visitorForm button[type="submit"]');
-        if (submitButton) {
-            submitButton.textContent = 'Cadastrar Visitante';
-        }
-
-        // Remover a classe de edição
-        document.getElementById('visitorForm').classList.remove('editing');
-
-        // Restaurar o título
-        const formTitle = document.querySelector('.form-container h2');
-        if (formTitle) {
-            formTitle.textContent = 'Cadastro de Visitante';
-        }
-
-        // Atualizar a lista de visitantes
-        displayVisitors();
-
-        // Limpar o parâmetro de URL (opcional)
-        history.replaceState(null, '', 'cadastrovisitantes.html');
-    } catch (error) {
-        console.error('Erro ao atualizar visitante:', error);
-        alert('Ocorreu um erro ao atualizar o visitante.');
-    }
-}
-
-// Exibe a lista de visitantes
-function displayVisitorsList() {
-    console.log('Exibindo lista de visitantes');
-    const listContainer = document.getElementById('visitorsList');
-
-    // Verificar se o container existe
-    if (!listContainer) {
-        console.error('Container de lista não encontrado');
-        return;
-    }
-
-    // Obter visitantes do localStorage
-    let visitors = [];
-    try {
-        const visitorsJSON = localStorage.getItem('visitors');
-        if (visitorsJSON) {
-            visitors = JSON.parse(visitorsJSON);
-        }
-        console.log('Visitantes carregados:', visitors.length);
-    } catch (e) {
-        console.error('Erro ao carregar visitantes:', e);
-        listContainer.innerHTML = '<p class="no-data">Erro ao carregar dados. Por favor, tente novamente.</p>';
-        return;
-    }
-
-    // Verificar se há visitantes
-    if (!visitors || visitors.length === 0) {
-        console.log('Nenhum visitante encontrado');
-        listContainer.innerHTML = '<p class="no-data">Nenhum visitante cadastrado.</p>';
-        return;
-    }
-
-    // Construir HTML para os visitantes
-    let html = '';
-    visitors.forEach(visitor => {
-        // Extrair apenas a data (se a string contiver hora)
-        let cadastroData = visitor.date;
-        if (cadastroData && cadastroData.includes(' ')) {
-            cadastroData = cadastroData.split(' ')[0];
-        }
-
-        html += `
-            <div class="visitor-card">
-                <div class="visitor-info">
-                    <h3>${visitor.name}</h3>
-                    <p><strong>Cidade:</strong> ${visitor.city}</p>
-                    <p><strong>Evangélico:</strong> ${visitor.evangelical}</p>
-                    ${visitor.evangelical === 'Sim' ? `<p><strong>Igreja:</strong> ${visitor.churchName || 'Não informada'}</p>` : ''}
-                    <p><strong>Data:</strong> ${cadastroData}</p>
-                </div>
-                <div class="visitor-actions">
-                    <button class="btn-edit" onclick="editVisitor(${visitor.id})">
-                        <i class="fas fa-edit"></i> Editar
-                    </button>
-                    <button class="btn-delete" onclick="deleteVisitor(${visitor.id})">
-                        <i class="fas fa-trash-alt"></i> Excluir
-                    </button>
-                </div>
-            </div>
-        `;
-    });
-
-    // Atualizar o conteúdo do container
-    listContainer.innerHTML = html;
-    console.log('Lista de visitantes atualizada');
-}
-
-// Funções para gerenciamento de visitantes
-function searchVisitors() {
-    console.log('Buscando visitantes...');
-    const searchTerm = document.getElementById('searchVisitor').value.toLowerCase();
-    const listContainer = document.getElementById('visitorsList');
-    if (!listContainer) return;
-
-    let visitors = [];
-    try {
-        const visitorsData = localStorage.getItem('visitors');
-        if (visitorsData) {
-            visitors = JSON.parse(visitorsData);
-        }
-    } catch (error) {
-        console.error('Erro ao buscar visitantes:', error);
-        return;
-    }
-
-    if (!visitors || visitors.length === 0) {
-        listContainer.innerHTML = '<p class="no-data">Nenhum visitante cadastrado.</p>';
-        return;
-    }
-
-    const filteredVisitors = visitors.filter(visitor =>
-        visitor.name.toLowerCase().includes(searchTerm) ||
-        visitor.city.toLowerCase().includes(searchTerm)
-    );
-
-    if (filteredVisitors.length === 0) {
-        listContainer.innerHTML = '<p class="no-data">Nenhum visitante encontrado com esse termo.</p>';
-        return;
-    }
-
-    let html = '';
-    filteredVisitors.forEach(visitor => {
-        // Extrair apenas a data (se a string contiver hora)
-        let cadastroData = visitor.date;
-        if (cadastroData && cadastroData.includes(' ')) {
-            cadastroData = cadastroData.split(' ')[0];
-        }
-
-        html += `
-            <div class="visitor-card">
-                <div class="visitor-info">
-                    <h3>${visitor.name}</h3>
-                    <p><strong>Cidade:</strong> ${visitor.city}</p>
-                    <p><strong>Evangélico:</strong> ${visitor.evangelical}</p>
-                    ${visitor.evangelical === 'Sim' ? `<p><strong>Igreja:</strong> ${visitor.churchName || 'Não informada'}</p>` : ''}
-                    <p><strong>Data:</strong> ${cadastroData}</p>
-                </div>
-                <div class="visitor-actions">
-                    <button class="btn-edit" onclick="editVisitor(${visitor.id})">
-                        <i class="fas fa-edit"></i> Editar
-                    </button>
-                    <button class="btn-delete" onclick="deleteVisitor(${visitor.id})">
-                        <i class="fas fa-trash-alt"></i> Excluir
-                    </button>
-                </div>
-            </div>
-        `;
-    });
-
-    listContainer.innerHTML = html;
-}
-
-// Função para editar visitante - garante que é acessível globalmente
-window.editVisitor = function (id) {
-    console.log('Função editVisitor chamada com ID:', id);
-    // Redireciona para a página de cadastro com o parâmetro de edição
-    window.location.href = `cadastrovisitantes.html?edit=${id}`;
+// Preencha para exibir os canais na página de Contato (campos vazios ficam ocultos).
+const CONTACT = {
+    email: 'contato@scv.com.br',
+    phone: '',     // ex.: '(92) 3000-0000'
+    whatsapp: ''   // ex.: '5592990000000' (somente números, com DDI e DDD)
 };
 
-// Função para excluir visitante
-function deleteVisitor(id) {
-    if (confirm('Tem certeza que deseja excluir este visitante?')) {
-        let visitors = [];
-        try {
-            const visitorsData = localStorage.getItem('visitors');
-            if (visitorsData) {
-                visitors = JSON.parse(visitorsData);
-            }
-        } catch (error) {
-            console.error('Erro ao excluir visitante:', error);
-            return;
-        }
+const STORAGE_KEY = 'visitors';
 
-        visitors = visitors.filter(visitor => visitor.id !== id);
-        localStorage.setItem('visitors', JSON.stringify(visitors));
+const ICONS = {
+    home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
+    plus: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>',
+    users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+    info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
+    mail: '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 7L2 7"/>',
+    search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+    edit: '<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/>',
+    trash: '<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+    download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
+    share: '<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/>',
+    menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
+    phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+    chat: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'
+};
 
-        // Atualizar a lista na interface
-        const listContainer = document.getElementById('visitorsList');
-        if (listContainer) {
-            displayVisitorsList();
-        }
-    }
+const NAV = [
+    { href: 'index.html', page: 'home', label: 'Início', icon: 'home' },
+    { href: 'cadastrovisitantes.html', page: 'cadastro', label: 'Cadastrar visitante', icon: 'plus' },
+    { href: 'listavisitantes.html', page: 'lista', label: 'Visitantes', icon: 'users' },
+    { href: 'sobre.html', page: 'sobre', label: 'Sobre', icon: 'info' },
+    { href: 'contato.html', page: 'contato', label: 'Contato', icon: 'mail' }
+];
+
+/* ---------- Utilidades ---------- */
+
+function icon(name) {
+    return `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name] || ''}</svg>`;
 }
 
-// Função para gerar PDF
-function generatePDF() {
-    console.log('Gerando PDF...');
-    if (typeof window.jspdf === 'undefined') {
-        console.error('Biblioteca jsPDF não encontrada');
-        alert('Biblioteca PDF não carregada. Por favor, atualize a página.');
-        return;
-    }
+function esc(value) {
+    return String(value ?? '').replace(/[&<>"']/g, c => (
+        { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+}
 
+function getVisitors() {
     try {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-
-        // Título
-        doc.setFontSize(18);
-        doc.text('Lista de Visitantes - SCV', 14, 20);
-
-        // Data e hora (somente a data atual para o relatório)
-        const dataAtual = new Date();
-        const dataFormatada = `${dataAtual.getDate().toString().padStart(2, '0')}/${(dataAtual.getMonth() + 1).toString().padStart(2, '0')}/${dataAtual.getFullYear()}`;
-        doc.setFontSize(12);
-        doc.text(`Gerado em: ${dataFormatada}`, 14, 30);
-
-        // Obter dados de visitantes
-        let visitors = [];
-        try {
-            const visitorsData = localStorage.getItem('visitors');
-            console.log('Dados do localStorage:', visitorsData);
-            if (visitorsData) {
-                visitors = JSON.parse(visitorsData);
-                console.log('Visitantes para PDF:', visitors.length);
-            }
-        } catch (error) {
-            console.error('Erro ao acessar localStorage para PDF:', error);
-        }
-
-        if (!visitors || visitors.length === 0) {
-            doc.text('Nenhum visitante cadastrado.', 14, 50);
-            doc.save('visitantes.pdf');
-            return;
-        }
-
-        // Preparar dados para a tabela
-        const tableColumn = ["Nome", "Cidade", "Evangélico", "Igreja", "Data de Cadastro"];
-        const tableRows = [];
-
-        visitors.forEach(visitor => {
-            // Extrair apenas a data (se a string contiver hora)
-            let cadastroData = visitor.date;
-            if (cadastroData && cadastroData.includes(' ')) {
-                cadastroData = cadastroData.split(' ')[0];
-            }
-
-            const visitorData = [
-                visitor.name,
-                visitor.city,
-                visitor.evangelical,
-                visitor.evangelical === 'Sim' ? (visitor.churchName || 'Não informada') : 'N/A',
-                cadastroData
-            ];
-            tableRows.push(visitorData);
-        });
-
-        // Adicionar tabela ao PDF
-        doc.autoTable({
-            head: [tableColumn],
-            body: tableRows,
-            startY: 40,
-            styles: { fontSize: 10, cellPadding: 3 },
-            headStyles: { fillColor: [42, 82, 152], textColor: 255 }
-        });
-
-        // Salvar PDF
-        doc.save('visitantes.pdf');
-        console.log('PDF gerado com sucesso');
-    } catch (error) {
-        console.error('Erro ao gerar PDF:', error);
-        alert('Ocorreu um erro ao gerar o PDF. Por favor, tente novamente.');
+        const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        return Array.isArray(data) ? data : [];
+    } catch {
+        return [];
     }
 }
 
-// Função para compartilhar PDF
-function sharePDF() {
-    console.log('Compartilhando PDF...');
-    if (typeof window.jspdf === 'undefined') {
-        console.error('Biblioteca jsPDF não encontrada');
-        alert('Biblioteca PDF não carregada. Por favor, atualize a página.');
-        return;
+function saveVisitors(list) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
+function todayBR() {
+    return new Date().toLocaleDateString('pt-BR');
+}
+
+// Registros antigos podem ter data + hora; mantém só a data (dd/mm/aaaa).
+function dateOnly(value) {
+    return String(value || '').split(' ')[0].replace(',', '');
+}
+
+function churchOf(v) {
+    return v.evangelical === 'Sim' ? (v.churchName || 'Não informada') : '—';
+}
+
+let toastTimer;
+function toast(message) {
+    let el = document.getElementById('toast');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'toast';
+        el.className = 'toast';
+        el.setAttribute('role', 'status');
+        document.body.appendChild(el);
     }
+    el.textContent = message;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
 
-    try {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-
-        // Título
-        doc.setFontSize(18);
-        doc.text('Lista de Visitantes - SCV', 14, 20);
-
-        // Data e hora
-        doc.setFontSize(12);
-        doc.text(`Gerado em: ${new Date().toLocaleString()}`, 14, 30);
-
-        // Obter dados de visitantes
-        let visitors = [];
-        try {
-            const visitorsData = localStorage.getItem('visitors');
-            if (visitorsData) {
-                visitors = JSON.parse(visitorsData);
-            }
-        } catch (error) {
-            console.error('Erro ao acessar localStorage para compartilhamento:', error);
-        }
-
-        if (!visitors || visitors.length === 0) {
-            doc.text('Nenhum visitante cadastrado.', 14, 50);
-            shareFile(doc);
-            return;
-        }
-
-        // Preparar dados para a tabela
-        const tableColumn = ["Nome", "Cidade", "Evangélico", "Igreja", "Data de Cadastro"];
-        const tableRows = [];
-
-        visitors.forEach(visitor => {
-            const visitorData = [
-                visitor.name,
-                visitor.city,
-                visitor.evangelical,
-                visitor.evangelical === 'Sim' ? (visitor.churchName || 'Não informada') : 'N/A',
-                visitor.date
-            ];
-            tableRows.push(visitorData);
+function confirmDialog({ title, text, confirmLabel }) {
+    return new Promise(resolve => {
+        const dlg = document.createElement('dialog');
+        dlg.innerHTML = `
+            <h3>${esc(title)}</h3>
+            <p>${esc(text)}</p>
+            <div class="form-actions">
+                <button type="button" class="btn btn-ghost" data-r="no">Cancelar</button>
+                <button type="button" class="btn btn-danger" data-r="yes">${esc(confirmLabel)}</button>
+            </div>`;
+        document.body.appendChild(dlg);
+        dlg.addEventListener('click', e => {
+            const r = e.target.closest('[data-r]');
+            if (r) dlg.close(r.dataset.r);
         });
-
-        // Adicionar tabela ao PDF
-        doc.autoTable({
-            head: [tableColumn],
-            body: tableRows,
-            startY: 40,
-            styles: { fontSize: 10, cellPadding: 3 },
-            headStyles: { fillColor: [42, 82, 152], textColor: 255 }
+        dlg.addEventListener('close', () => {
+            resolve(dlg.returnValue === 'yes');
+            dlg.remove();
         });
-
-        // Compartilhar o PDF
-        shareFile(doc);
-    } catch (error) {
-        console.error('Erro ao compartilhar PDF:', error);
-        alert('Ocorreu um erro ao compartilhar o PDF. Por favor, tente novamente.');
-    }
+        dlg.showModal();
+    });
 }
 
-// Função auxiliar para compartilhar arquivo
-function shareFile(doc) {
-    try {
-        // Criar arquivo blob do PDF
-        const pdfBlob = doc.output('blob');
-        const pdfFile = new File([pdfBlob], 'visitantes.pdf', { type: 'application/pdf' });
+/* ---------- Estrutura comum (menu lateral e barra superior) ---------- */
 
-        // Verificar se a API Web Share está disponível
-        if (navigator.share && navigator.canShare({ files: [pdfFile] })) {
-            navigator.share({
-                files: [pdfFile],
-                title: 'Lista de Visitantes - SCV',
-                text: 'Relatório de visitantes gerado pelo SCV'
-            })
-                .catch((error) => {
-                    console.log('Erro ao compartilhar:', error);
-                    doc.save('visitantes.pdf');
-                });
-        } else {
-            // Fallback: criar link para download se a API Web Share não estiver disponível
-            const pdfUrl = URL.createObjectURL(pdfBlob);
+function buildShell() {
+    const sidebar = document.getElementById('sidebar');
+    const current = document.body.dataset.page;
+    if (!sidebar) return;
 
-            // Opções de compartilhamento alternativas
-            if (confirm('Deseja enviar este PDF por e-mail?')) {
-                const emailSubject = encodeURIComponent('Lista de Visitantes - SCV');
-                const emailBody = encodeURIComponent('Segue em anexo a lista de visitantes.');
-                window.location.href = `mailto:?subject=${emailSubject}&body=${emailBody}`;
-
-                alert('Após enviar o e-mail, não se esqueça de anexar o PDF que será baixado agora.');
-            }
-
-            // Fazer download do arquivo
-            const tempLink = document.createElement('a');
-            tempLink.href = pdfUrl;
-            tempLink.download = 'visitantes.pdf';
-            tempLink.click();
-
-            // Limpar URL temporária
-            URL.revokeObjectURL(pdfUrl);
-        }
-    } catch (error) {
-        console.error('Erro ao compartilhar arquivo:', error);
-        alert('Ocorreu um erro ao compartilhar o arquivo. O PDF será baixado automaticamente.');
-        doc.save('visitantes.pdf');
-    }
-}
-
-/**
- * Salva os dados de um novo visitante no localStorage
- */
-function saveVisitor() {
-    const name = document.getElementById('name').value;
-    const city = document.getElementById('city').value;
-    const evangelical = document.querySelector('input[name="evangelical"]:checked').value;
-    const churchName = evangelical === 'Sim' ? document.getElementById('churchName').value : '';
-
-    // Formatar a data para mostrar apenas a data (sem a hora)
-    const currentDate = new Date();
-    const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getFullYear()}`;
-
-    const visitor = {
-        id: Date.now(),
-        name,
-        city,
-        evangelical,
-        churchName,
-        date: formattedDate // Usar o formato de data sem hora
-    };
-
-    let visitors = JSON.parse(localStorage.getItem('visitors')) || [];
-    visitors.push(visitor);
-    localStorage.setItem('visitors', JSON.stringify(visitors));
-
-    document.getElementById('visitorForm').reset();
-    document.getElementById('churchSection').style.display = 'none';
-
-    displayVisitors();
-}
-
-/**
- * Exibe a lista de visitantes cadastrados
- */
-function displayVisitors() {
-    const displayDiv = document.getElementById('displayVisitors');
-    if (!displayDiv) return;
-
-    const visitors = JSON.parse(localStorage.getItem('visitors')) || [];
-
-    if (visitors.length === 0) {
-        displayDiv.innerHTML = '<p>Nenhum visitante cadastrado.</p>';
-        return;
-    }
-
-    let html = '<h2>Visitantes Cadastrados</h2>';
-    html += '<div class="visitors-list">';
-
-    visitors.forEach(visitor => {
-        // Extrair apenas a data (se a string contiver hora)
-        let cadastroData = visitor.date;
-        if (cadastroData && cadastroData.includes(' ')) {
-            cadastroData = cadastroData.split(' ')[0];
-        }
-
-        html += `
-            <div class="visitor-card">
-                <div class="visitor-info">
-                    <h3>${visitor.name}</h3>
-                    <p><strong>Cidade:</strong> ${visitor.city}</p>
-                    <p><strong>Evangélico:</strong> ${visitor.evangelical}</p>
-                    ${visitor.evangelical === 'Sim' ? `<p><strong>Igreja:</strong> ${visitor.churchName}</p>` : ''}
-                    <p><strong>Data:</strong> ${cadastroData}</p>
-                </div>
-                <div class="visitor-actions">
-                    <button class="btn-edit" onclick="editVisitor(${visitor.id})">
-                        <i class="fas fa-edit"></i> Editar
-                    </button>
-                    <button class="btn-delete" onclick="deleteVisitor(${visitor.id})">
-                        <i class="fas fa-trash-alt"></i> Excluir
-                    </button>
-                </div>
+    sidebar.innerHTML = `
+        <div class="brand">
+            <img src="logo.svg" alt="" width="40" height="40">
+            <div>
+                <strong>SCV</strong>
+                <span>Sistema de cadastro de visitantes</span>
             </div>
-        `;
+        </div>
+        <ul class="nav">
+            ${NAV.map(n => `
+                <li><a href="${n.href}"${n.page === current ? ' aria-current="page"' : ''}>${icon(n.icon)}${n.label}</a></li>
+            `).join('')}
+        </ul>
+        <div class="side-foot">Desenvolvido por Ivonildo Lima</div>`;
+
+    const topbar = document.getElementById('topbar');
+    if (topbar) {
+        topbar.innerHTML = `
+            <button class="icon-btn" id="menuToggle" aria-label="Abrir menu" aria-controls="sidebar">${icon('menu')}</button>
+            <span>${esc(document.body.dataset.title || 'SCV')}</span>`;
+    }
+
+    const overlay = document.getElementById('overlay');
+    const setOpen = open => {
+        sidebar.classList.toggle('open', open);
+        overlay.classList.toggle('open', open);
+    };
+    document.getElementById('menuToggle')?.addEventListener('click', () => setOpen(!sidebar.classList.contains('open')));
+    overlay?.addEventListener('click', () => setOpen(false));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+
+    document.querySelectorAll('[data-icon]').forEach(el => {
+        el.innerHTML = icon(el.dataset.icon);
+        el.style.display = 'inline-flex';
+    });
+}
+
+/* ---------- Início ---------- */
+
+function initHome() {
+    const visitors = getVisitors();
+    const now = new Date();
+    const thisMonth = visitors.filter(v => {
+        const [, m, y] = dateOnly(v.date).split('/');
+        return Number(m) === now.getMonth() + 1 && Number(y) === now.getFullYear();
+    }).length;
+    const evangelicals = visitors.filter(v => v.evangelical === 'Sim').length;
+
+    document.getElementById('statTotal').textContent = visitors.length;
+    document.getElementById('statMonth').textContent = thisMonth;
+    document.getElementById('statEvangelical').textContent = evangelicals;
+
+    const box = document.getElementById('recent');
+    if (!visitors.length) {
+        box.innerHTML = `<div class="empty">Nenhum visitante cadastrado ainda.<br><a href="cadastrovisitantes.html">Cadastrar o primeiro</a></div>`;
+        return;
+    }
+    const recent = [...visitors].reverse().slice(0, 5);
+    box.innerHTML = `<table>
+        <thead><tr><th>Nome</th><th>Cidade</th><th>Data</th></tr></thead>
+        <tbody>${recent.map(v => `
+            <tr>
+                <td class="cell-name"><span class="name">${esc(v.name)}</span></td>
+                <td data-label="Cidade">${esc(v.city)}</td>
+                <td data-label="Data">${esc(dateOnly(v.date))}</td>
+            </tr>`).join('')}
+        </tbody></table>`;
+}
+
+/* ---------- Cadastro / edição ---------- */
+
+function initForm() {
+    const form = document.getElementById('visitorForm');
+    const churchField = document.getElementById('churchSection');
+    const churchInput = document.getElementById('churchName');
+    const editId = Number(new URLSearchParams(location.search).get('edit')) || null;
+
+    const toggleChurch = show => {
+        churchField.hidden = !show;
+        churchInput.required = show;
+        if (!show) churchInput.value = '';
+    };
+    document.getElementById('evangelicalYes').addEventListener('change', () => toggleChurch(true));
+    document.getElementById('evangelicalNo').addEventListener('change', () => toggleChurch(false));
+
+    if (editId) {
+        const visitor = getVisitors().find(v => v.id === editId);
+        if (!visitor) {
+            toast('Visitante não encontrado.');
+        } else {
+            document.getElementById('formTitle').textContent = 'Editar visitante';
+            document.getElementById('formLead').textContent = 'Altere os dados e salve.';
+            document.getElementById('submitLabel').textContent = 'Salvar alterações';
+            document.getElementById('name').value = visitor.name;
+            document.getElementById('city').value = visitor.city;
+            const isEvangelical = visitor.evangelical === 'Sim';
+            document.getElementById(isEvangelical ? 'evangelicalYes' : 'evangelicalNo').checked = true;
+            toggleChurch(isEvangelical);
+            churchInput.value = visitor.churchName || '';
+        }
+    }
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        const data = {
+            name: form.elements.name.value.trim(),
+            city: form.city.value.trim(),
+            evangelical: form.evangelical.value,
+            churchName: form.evangelical.value === 'Sim' ? churchInput.value.trim() : ''
+        };
+        const visitors = getVisitors();
+
+        if (editId) {
+            const i = visitors.findIndex(v => v.id === editId);
+            if (i === -1) return toast('Visitante não encontrado.');
+            visitors[i] = { ...visitors[i], ...data };
+            saveVisitors(visitors);
+            sessionStorage.setItem('flash', 'Alterações salvas.');
+            location.href = 'listavisitantes.html';
+            return;
+        }
+
+        visitors.push({ id: Date.now(), ...data, date: todayBR() });
+        saveVisitors(visitors);
+        form.reset();
+        toggleChurch(false);
+        form.elements.name.focus();
+        toast(`${data.name} foi cadastrado.`);
+    });
+}
+
+/* ---------- Lista ---------- */
+
+function initList() {
+    const body = document.getElementById('rows');
+    const search = document.getElementById('searchVisitor');
+    const count = document.getElementById('count');
+    const tableWrap = document.getElementById('tableWrap');
+    const empty = document.getElementById('emptyState');
+
+    const flash = sessionStorage.getItem('flash');
+    if (flash) {
+        sessionStorage.removeItem('flash');
+        toast(flash);
+    }
+
+    function render() {
+        const all = getVisitors();
+        const term = search.value.trim().toLowerCase();
+        const list = [...all].reverse().filter(v =>
+            !term || `${v.name} ${v.city} ${v.churchName || ''}`.toLowerCase().includes(term)
+        );
+
+        count.textContent = term
+            ? `${list.length} de ${all.length} visitantes`
+            : `${all.length} ${all.length === 1 ? 'visitante' : 'visitantes'}`;
+
+        tableWrap.hidden = list.length === 0;
+        empty.hidden = list.length > 0;
+        empty.innerHTML = all.length
+            ? 'Nenhum visitante encontrado para essa busca.'
+            : 'Nenhum visitante cadastrado ainda.<br><a href="cadastrovisitantes.html">Cadastrar o primeiro</a>';
+
+        body.innerHTML = list.map(v => `
+            <tr>
+                <td class="cell-name"><span class="name">${esc(v.name)}</span></td>
+                <td data-label="Cidade">${esc(v.city)}</td>
+                <td data-label="Igreja">
+                    ${v.evangelical === 'Sim'
+                        ? `<span class="tag">Evangélico</span><span class="sub">${esc(churchOf(v))}</span>`
+                        : '<span class="tag no">Não evangélico</span>'}
+                </td>
+                <td data-label="Cadastro">${esc(dateOnly(v.date))}</td>
+                <td class="cell-actions">
+                    <div class="row-actions">
+                        <a class="icon-btn" href="cadastrovisitantes.html?edit=${v.id}" aria-label="Editar ${esc(v.name)}" title="Editar">${icon('edit')}</a>
+                        <button class="icon-btn del" data-del="${v.id}" aria-label="Excluir ${esc(v.name)}" title="Excluir">${icon('trash')}</button>
+                    </div>
+                </td>
+            </tr>`).join('');
+    }
+
+    search.addEventListener('input', render);
+
+    body.addEventListener('click', async e => {
+        const btn = e.target.closest('[data-del]');
+        if (!btn) return;
+        const id = Number(btn.dataset.del);
+        const visitor = getVisitors().find(v => v.id === id);
+        const ok = await confirmDialog({
+            title: 'Excluir visitante',
+            text: `${visitor ? visitor.name : 'Este visitante'} será removido da lista. Essa ação não pode ser desfeita.`,
+            confirmLabel: 'Excluir'
+        });
+        if (!ok) return;
+        saveVisitors(getVisitors().filter(v => v.id !== id));
+        render();
+        toast('Visitante excluído.');
     });
 
-    html += '</div>';
-    displayDiv.innerHTML = html;
+    document.getElementById('clearAll').addEventListener('click', async () => {
+        if (!getVisitors().length) return toast('A lista já está vazia.');
+        const ok = await confirmDialog({
+            title: 'Apagar todos os visitantes',
+            text: 'Todo o histórico será apagado deste aparelho. Essa ação não pode ser desfeita.',
+            confirmLabel: 'Apagar tudo'
+        });
+        if (!ok) return;
+        saveVisitors([]);
+        render();
+        toast('Histórico apagado.');
+    });
+
+    document.getElementById('generatePDF').addEventListener('click', () => {
+        const doc = buildPDF();
+        if (doc) doc.save('visitantes.pdf');
+    });
+    document.getElementById('sharePDF').addEventListener('click', sharePDF);
+
+    render();
 }
+
+/* ---------- PDF ---------- */
+
+function buildPDF() {
+    if (!window.jspdf) {
+        toast('Biblioteca de PDF não carregada. Verifique a conexão e recarregue.');
+        return null;
+    }
+    const visitors = getVisitors();
+    if (!visitors.length) {
+        toast('Não há visitantes para exportar.');
+        return null;
+    }
+    const doc = new window.jspdf.jsPDF();
+    doc.setFontSize(18);
+    doc.text('Lista de Visitantes', 14, 20);
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+    doc.text(`Gerado em ${todayBR()} · ${visitors.length} registros`, 14, 28);
+
+    doc.autoTable({
+        head: [['Nome', 'Cidade', 'Evangélico', 'Igreja', 'Cadastro']],
+        body: visitors.map(v => [v.name, v.city, v.evangelical, churchOf(v), dateOnly(v.date)]),
+        startY: 36,
+        styles: { fontSize: 10, cellPadding: 3 },
+        headStyles: { fillColor: [31, 58, 95], textColor: 255 }
+    });
+    return doc;
+}
+
+async function sharePDF() {
+    const doc = buildPDF();
+    if (!doc) return;
+    const file = new File([doc.output('blob')], 'visitantes.pdf', { type: 'application/pdf' });
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+            await navigator.share({ files: [file], title: 'Lista de Visitantes' });
+            return;
+        } catch (err) {
+            if (err.name === 'AbortError') return;
+        }
+    }
+    doc.save('visitantes.pdf');
+    toast('Compartilhamento indisponível neste aparelho. O PDF foi baixado.');
+}
+
+/* ---------- Contato ---------- */
+
+function initContact() {
+    const channels = [
+        CONTACT.email && { href: `mailto:${CONTACT.email}`, icon: 'mail', title: 'E-mail', text: CONTACT.email },
+        CONTACT.phone && { href: `tel:${CONTACT.phone.replace(/\D/g, '')}`, icon: 'phone', title: 'Telefone', text: CONTACT.phone },
+        CONTACT.whatsapp && { href: `https://wa.me/${CONTACT.whatsapp.replace(/\D/g, '')}`, icon: 'chat', title: 'WhatsApp', text: 'Enviar mensagem' }
+    ].filter(Boolean);
+
+    document.getElementById('channels').innerHTML = channels.map(c => `
+        <a class="channel" href="${esc(c.href)}">${icon(c.icon)}<div><b>${c.title}</b><span>${esc(c.text)}</span></div></a>
+    `).join('');
+
+    const form = document.getElementById('contactForm');
+    if (!CONTACT.email) {
+        form.closest('.panel').hidden = true;
+        return;
+    }
+    // Abre o app de e-mail do usuário já preenchido; o sistema não tem servidor próprio.
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        const subject = encodeURIComponent(form.subject.value.trim());
+        const body = encodeURIComponent(`${form.message.value.trim()}\n\n— ${form.elements.name.value.trim()} (${form.email.value.trim()})`);
+        location.href = `mailto:${CONTACT.email}?subject=${subject}&body=${body}`;
+    });
+}
+
+/* ---------- Inicialização ---------- */
+
+document.addEventListener('DOMContentLoaded', () => {
+    buildShell();
+    const init = { home: initHome, cadastro: initForm, lista: initList, contato: initContact }[document.body.dataset.page];
+    if (init) init();
+});

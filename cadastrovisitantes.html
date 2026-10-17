@@ -4,88 +4,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Visitantes - SCV</title>
+    <title>Cadastrar visitante · SCV</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&display=swap">
+    <link rel="icon" href="logo.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
-<body>
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <span class="logo-text">SCV</span>
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="index.html"><i class="fas fa-home"></i> Início</a></li>
-            <li><a href="cadastrovisitantes.html" class="active"><i class="fas fa-user-plus"></i> Cadastrar
-                    Visitante</a></li>
-            <li><a href="listavisitantes.html"><i class="fas fa-list"></i> Lista de Visitantes</a></li>
-            <li><a href="sobre.html"><i class="fas fa-info-circle"></i> Sobre</a></li>
-            <li><a href="contato.html"><i class="fas fa-envelope"></i> Contato</a></li>
-        </ul>
-    </div>
+<body data-page="cadastro" data-title="Cadastrar visitante">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="overlay" id="overlay"></div>
 
-    <!-- Header -->
-    <div class="header">
-        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
-        <div class="header-title">Cadastro de Visitantes</div>
-    </div>
+    <div class="content">
+        <header class="topbar" id="topbar"></header>
 
-    <!-- Conteúdo principal -->
-    <div class="main-content" id="mainContent">
-        <h1>Cadastro de Visitantes</h1>
-        <form id="visitorForm">
-            <div class="form-group">
-                <label for="name">Nome:</label>
-                <input type="text" id="name" name="name" required>
+        <main>
+            <div class="page-head">
+                <h1 id="formTitle">Cadastrar visitante</h1>
+                <p id="formLead">Preencha os dados de quem está nos visitando hoje.</p>
             </div>
-            <div class="form-group">
-                <label for="city">Cidade:</label>
-                <input type="text" id="city" name="city" required>
-            </div>
-            <div class="form-group">
-                <label>É evangélico?</label>
-                <div class="radio-group">
-                    <input type="radio" id="evangelicalYes" name="evangelical" value="Sim" required>
-                    <label for="evangelicalYes">Sim</label>
-                    <input type="radio" id="evangelicalNo" name="evangelical" value="Não" required>
-                    <label for="evangelicalNo">Não</label>
+
+            <form id="visitorForm" class="panel form-narrow form-grid">
+                <div class="field full">
+                    <label for="name">Nome completo</label>
+                    <input type="text" id="name" name="name" autocomplete="off" required>
                 </div>
-            </div>
-            <div id="churchSection" class="form-group" style="display: none;">
-                <label for="churchName">Nome da Igreja:</label>
-                <input type="text" id="churchName" name="churchName">
-            </div>
-            <div class="form-buttons">
-                <button type="submit"><i class="fas fa-save"></i> Cadastrar</button>
-                <button type="button" id="clearHistory"><i class="fas fa-trash"></i> Limpar Histórico</button>
-            </div>
-        </form>
-        <div id="displayVisitors"></div>
+
+                <div class="field">
+                    <label for="city">Cidade</label>
+                    <input type="text" id="city" name="city" autocomplete="off" required>
+                </div>
+
+                <fieldset class="field">
+                    <legend>É evangélico?</legend>
+                    <div class="segmented">
+                        <input type="radio" id="evangelicalYes" name="evangelical" value="Sim" required>
+                        <label for="evangelicalYes">Sim</label>
+                        <input type="radio" id="evangelicalNo" name="evangelical" value="Não">
+                        <label for="evangelicalNo">Não</label>
+                    </div>
+                </fieldset>
+
+                <div class="field full" id="churchSection" hidden>
+                    <label for="churchName">Igreja de origem</label>
+                    <input type="text" id="churchName" name="churchName" autocomplete="off">
+                </div>
+
+                <div class="form-actions full">
+                    <button type="submit" class="btn btn-primary"><span id="submitLabel">Cadastrar</span></button>
+                    <a href="listavisitantes.html" class="btn btn-ghost">Ver lista</a>
+                </div>
+            </form>
+        </main>
     </div>
-
-    <!-- Modal de confirmação -->
-    <div id="confirmationModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h3>Confirmar exclusão</h3>
-            <p>Tem certeza que deseja apagar todo o histórico de visitantes? Esta ação não pode ser desfeita.</p>
-            <div class="modal-buttons">
-                <button id="cancelDelete" class="btn-secondary">Cancelar</button>
-                <button id="confirmDelete" class="btn-danger">Excluir dados</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-bottom">
-            <p>&copy; 2025 SCV - Sistema de Cadastro de Visitantes</p>
-            <p>Desenvolvido por Ivonildo Lima</p>
-        </div>
-    </footer>
-
-    <!-- Scripts -->
 
     <script src="script.js"></script>
 </body>
