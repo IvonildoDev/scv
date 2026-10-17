@@ -22,6 +22,7 @@ const ICONS = {
     share: '<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/>',
     menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
     phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+    pin: '<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
     chat: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'
 };
 
@@ -282,13 +283,57 @@ function initForm() {
     });
 }
 
+function initials(name) {
+    const parts = String(name).trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return '?';
+    const first = parts[0][0];
+    const last = parts.length > 1 ? parts[parts.length - 1][0] : '';
+    return (first + last).toUpperCase();
+}
+
+// Tom do avatar escolhido pelo nome, para o mesmo visitante manter sempre a mesma cor.
+function avatarTone(name) {
+    let h = 0;
+    for (const c of String(name)) h = (h * 31 + c.charCodeAt(0)) % 5;
+    return `tone-${h}`;
+}
+
+function visitorCard(v) {
+    const evangelical = v.evangelical === 'Sim';
+    const details = [];
+    if (evangelical) {
+        details.push(['Igreja', churchOf(v)]);
+        if (v.hasRole) details.push(['Cargo', roleOf(v)]);
+    }
+    details.push(['Cadastro', dateOnly(v.date)]);
+
+    return `
+        <article class="vcard">
+            <header class="vcard-top">
+                <span class="avatar ${avatarTone(v.name)}" aria-hidden="true">${esc(initials(v.name))}</span>
+                <div class="vcard-id">
+                    <h3>${esc(v.name)}</h3>
+                    <p class="where">${icon('pin')}${esc(v.city)}</p>
+                </div>
+                <div class="row-actions">
+                    <a class="icon-btn" href="cadastrovisitantes.html?edit=${v.id}" aria-label="Editar ${esc(v.name)}" title="Editar">${icon('edit')}</a>
+                    <button class="icon-btn del" data-del="${v.id}" aria-label="Excluir ${esc(v.name)}" title="Excluir">${icon('trash')}</button>
+                </div>
+            </header>
+            <span class="tag${evangelical ? '' : ' no'}">${evangelical ? 'Evangélico' : 'Não evangélico'}</span>
+            <dl class="vcard-meta">
+                ${details.map(([k, val]) => `<div><dt>${k}</dt><dd>${esc(val)}</dd></div>`).join('')}
+            </dl>
+        </article>`;
+}
+
 /* ---------- Lista ---------- */
 
 function initList() {
     const body = document.getElementById('rows');
     const search = document.getElementById('searchVisitor');
     const count = document.getElementById('count');
-    const tableWrap = document.getElementById('tableWrap');
+    const tableWrap = body;
     const empty = document.getElementById('emptyState');
 
     const flash = sessionStorage.getItem('flash');
@@ -314,24 +359,7 @@ function initList() {
             ? 'Nenhum visitante encontrado para essa busca.'
             : 'Nenhum visitante cadastrado ainda.<br><a href="cadastrovisitantes.html">Cadastrar o primeiro</a>';
 
-        body.innerHTML = list.map(v => `
-            <tr>
-                <td class="cell-name"><span class="name">${esc(v.name)}</span></td>
-                <td data-label="Cidade">${esc(v.city)}</td>
-                <td data-label="Igreja">
-                    ${v.evangelical === 'Sim'
-                        ? `<span class="tag">Evangélico</span><span class="sub">${esc(churchOf(v))}</span>`
-                        : '<span class="tag no">Não evangélico</span>'}
-                </td>
-                <td data-label="Cargo">${esc(roleOf(v))}</td>
-                <td data-label="Cadastro">${esc(dateOnly(v.date))}</td>
-                <td class="cell-actions">
-                    <div class="row-actions">
-                        <a class="icon-btn" href="cadastrovisitantes.html?edit=${v.id}" aria-label="Editar ${esc(v.name)}" title="Editar">${icon('edit')}</a>
-                        <button class="icon-btn del" data-del="${v.id}" aria-label="Excluir ${esc(v.name)}" title="Excluir">${icon('trash')}</button>
-                    </div>
-                </td>
-            </tr>`).join('');
+        body.innerHTML = list.map(visitorCard).join('');
     }
 
     search.addEventListener('input', render);
