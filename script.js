@@ -71,6 +71,12 @@ function churchOf(v) {
     return v.evangelical === 'Sim' ? (v.churchName || 'Não informada') : '—';
 }
 
+function roleOf(v) {
+    if (v.evangelical !== 'Sim') return '—';
+    if (v.hasRole === 'Sim') return v.roleName || 'Não informado';
+    return v.hasRole === 'Não' ? 'Sem cargo' : '—';
+}
+
 let toastTimer;
 function toast(message) {
     let el = document.getElementById('toast');
@@ -194,13 +200,31 @@ function initForm() {
     const churchInput = document.getElementById('churchName');
     const editId = Number(new URLSearchParams(location.search).get('edit')) || null;
 
+    const roleChoice = document.getElementById('roleChoice');
     const toggleChurch = show => {
         churchField.hidden = !show;
         churchInput.required = show;
         if (!show) churchInput.value = '';
+        // A pergunta sobre cargo só faz sentido para evangélicos.
+        roleChoice.hidden = !show;
+        document.getElementById('roleYes').required = show;
+        if (!show) {
+            roleChoice.querySelectorAll('input').forEach(i => { i.checked = false; });
+            toggleRole(false);
+        }
     };
     document.getElementById('evangelicalYes').addEventListener('change', () => toggleChurch(true));
     document.getElementById('evangelicalNo').addEventListener('change', () => toggleChurch(false));
+
+    const roleField = document.getElementById('roleSection');
+    const roleInput = document.getElementById('roleName');
+    const toggleRole = show => {
+        roleField.hidden = !show;
+        roleInput.required = show;
+        if (!show) roleInput.value = '';
+    };
+    document.getElementById('roleYes').addEventListener('change', () => toggleRole(true));
+    document.getElementById('roleNo').addEventListener('change', () => toggleRole(false));
 
     if (editId) {
         const visitor = getVisitors().find(v => v.id === editId);
@@ -216,16 +240,25 @@ function initForm() {
             document.getElementById(isEvangelical ? 'evangelicalYes' : 'evangelicalNo').checked = true;
             toggleChurch(isEvangelical);
             churchInput.value = visitor.churchName || '';
+            if (visitor.hasRole) {
+                const hasRole = visitor.hasRole === 'Sim';
+                document.getElementById(hasRole ? 'roleYes' : 'roleNo').checked = true;
+                toggleRole(hasRole);
+                roleInput.value = visitor.roleName || '';
+            }
         }
     }
 
     form.addEventListener('submit', e => {
         e.preventDefault();
+        const isEvangelical = form.evangelical.value === 'Sim';
         const data = {
             name: form.elements.name.value.trim(),
             city: form.city.value.trim(),
             evangelical: form.evangelical.value,
-            churchName: form.evangelical.value === 'Sim' ? churchInput.value.trim() : ''
+            churchName: form.evangelical.value === 'Sim' ? churchInput.value.trim() : '',
+            hasRole: isEvangelical ? form.hasRole.value : '',
+            roleName: isEvangelical && form.hasRole.value === 'Sim' ? roleInput.value.trim() : ''
         };
         const visitors = getVisitors();
 
@@ -243,6 +276,7 @@ function initForm() {
         saveVisitors(visitors);
         form.reset();
         toggleChurch(false);
+        toggleRole(false);
         form.elements.name.focus();
         toast(`${data.name} foi cadastrado.`);
     });
@@ -267,7 +301,7 @@ function initList() {
         const all = getVisitors();
         const term = search.value.trim().toLowerCase();
         const list = [...all].reverse().filter(v =>
-            !term || `${v.name} ${v.city} ${v.churchName || ''}`.toLowerCase().includes(term)
+            !term || `${v.name} ${v.city} ${v.churchName || ''} ${v.roleName || ''}`.toLowerCase().includes(term)
         );
 
         count.textContent = term
@@ -289,6 +323,7 @@ function initList() {
                         ? `<span class="tag">Evangélico</span><span class="sub">${esc(churchOf(v))}</span>`
                         : '<span class="tag no">Não evangélico</span>'}
                 </td>
+                <td data-label="Cargo">${esc(roleOf(v))}</td>
                 <td data-label="Cadastro">${esc(dateOnly(v.date))}</td>
                 <td class="cell-actions">
                     <div class="row-actions">
@@ -359,8 +394,8 @@ function buildPDF() {
     doc.text(`Gerado em ${todayBR()} · ${visitors.length} registros`, 14, 28);
 
     doc.autoTable({
-        head: [['Nome', 'Cidade', 'Evangélico', 'Igreja', 'Cadastro']],
-        body: visitors.map(v => [v.name, v.city, v.evangelical, churchOf(v), dateOnly(v.date)]),
+        head: [['Nome', 'Cidade', 'Evangélico', 'Igreja', 'Cargo', 'Cadastro']],
+        body: visitors.map(v => [v.name, v.city, v.evangelical, churchOf(v), roleOf(v), dateOnly(v.date)]),
         startY: 36,
         styles: { fontSize: 10, cellPadding: 3 },
         headStyles: { fillColor: [31, 58, 95], textColor: 255 }

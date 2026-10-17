@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&display=swap">
     <link rel="icon" href="logo.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=3">
 </head>
 
 <body data-page="cadastro" data-title="Cadastrar visitante">
@@ -51,6 +51,21 @@
                     <input type="text" id="churchName" name="churchName" autocomplete="off">
                 </div>
 
+                <fieldset class="field" id="roleChoice" hidden>
+                    <legend>Tem cargo na igreja?</legend>
+                    <div class="segmented">
+                        <input type="radio" id="roleYes" name="hasRole" value="Sim">
+                        <label for="roleYes">Sim</label>
+                        <input type="radio" id="roleNo" name="hasRole" value="Não">
+                        <label for="roleNo">Não</label>
+                    </div>
+                </fieldset>
+
+                <div class="field full" id="roleSection" hidden>
+                    <label for="roleName">Qual cargo?</label>
+                    <input type="text" id="roleName" name="roleName" placeholder="Ex.: diácono, presbítero, cantor" autocomplete="off">
+                </div>
+
                 <div class="form-actions full">
                     <button type="submit" class="btn btn-primary"><span id="submitLabel">Cadastrar</span></button>
                     <a href="listavisitantes.html" class="btn btn-ghost">Ver lista</a>
@@ -59,7 +74,7 @@
         </main>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=3"></script>
 </body>
 
 </html>
