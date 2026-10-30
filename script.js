@@ -88,11 +88,12 @@ function initLogin() {
         e.preventDefault();
         localStorage.setItem(RECEPTIONIST_KEY, JSON.stringify({
             name: form.recName.value.trim(),
-            name2: form.recName2.value.trim()
+            name2: form.recName2.value.trim(),
+            congregation: form.congregation.value.trim()
         }));
         location.href = 'index.html';
     });
-    form.recName.focus();
+    form.congregation.focus();
 }
 
 function logout() {
@@ -167,11 +168,7 @@ function buildShell() {
 
     sidebar.innerHTML = `
         <div class="brand">
-            <img src="logo.svg" alt="" width="40" height="40">
-            <div>
-                <strong>SCV</strong>
-                <span>Sistema de cadastro de visitantes</span>
-            </div>
+            <div class="logo-crop"><img src="imagem/logo.png" alt="SCV — Sistema de Cadastro de Visitantes"></div>
         </div>
         <ul class="nav">
             ${NAV.map(n => `
@@ -190,7 +187,7 @@ function buildShell() {
                 <span class="avatar ${avatarTone(rec.name)}" aria-hidden="true">${esc(initials(rec.name))}</span>
                 <div class="rec-text">
                     <b>${esc(receptionistNames(rec))}</b>
-                    <small>${RECEPTION_TEAM}</small>
+                    <small>${esc(rec.congregation || RECEPTION_TEAM)}</small>
                 </div>
                 <button class="icon-btn" id="logoutBtn" aria-label="Sair" title="Sair">${icon('logout')}</button>
             </div>`;
@@ -354,7 +351,6 @@ function visitorCard(v) {
     const details = [];
     if (evangelical) {
         details.push(['Igreja', churchOf(v)]);
-        if (v.hasRole) details.push(['Cargo', roleOf(v)]);
     }
     details.push(['Cadastro', dateOnly(v.date)]);
 
@@ -366,15 +362,18 @@ function visitorCard(v) {
                     <h3>${esc(v.name)}</h3>
                     <p class="where">${icon('pin')}${esc(v.city)}</p>
                 </div>
-                <div class="row-actions">
-                    <a class="icon-btn" href="cadastrovisitantes.html?edit=${v.id}" aria-label="Editar ${esc(v.name)}" title="Editar">${icon('edit')}</a>
-                    <button class="icon-btn del" data-del="${v.id}" aria-label="Excluir ${esc(v.name)}" title="Excluir">${icon('trash')}</button>
-                </div>
             </header>
-            <span class="tag${evangelical ? '' : ' no'}">${evangelical ? 'Evangélico' : 'Não evangélico'}</span>
+            <div class="tags">
+                <span class="tag${evangelical ? '' : ' no'}">${evangelical ? 'Evangélico' : 'Não evangélico'}</span>
+                ${evangelical && v.hasRole ? `<span class="tag role">${esc(roleOf(v))}</span>` : ''}
+            </div>
             <dl class="vcard-meta">
                 ${details.map(([k, val]) => `<div><dt>${k}</dt><dd>${esc(val)}</dd></div>`).join('')}
             </dl>
+            <div class="vcard-actions">
+                <a class="btn btn-ghost" href="cadastrovisitantes.html?edit=${v.id}" aria-label="Editar ${esc(v.name)}">Editar</a>
+                <button class="btn btn-quiet-danger" data-del="${v.id}" aria-label="Excluir ${esc(v.name)}">Excluir</button>
+            </div>
         </article>`;
 }
 
@@ -467,12 +466,12 @@ function buildPDF() {
     }
     const doc = new window.jspdf.jsPDF();
     doc.setFontSize(18);
-    doc.text('Lista de Visitantes', 14, 20);
+    const rec = getReceptionist();
+    doc.text(rec && rec.congregation ? `Lista de Visitantes — ${rec.congregation}` : 'Lista de Visitantes', 14, 20);
     doc.setFontSize(11);
     doc.setTextColor(100);
     doc.text(`Gerado em ${todayBR()} · ${visitors.length} registros`, 14, 28);
 
-    const rec = getReceptionist();
     let startY = 36;
     if (rec) {
         const label = rec.name2 ? 'Recepcionistas' : 'Recepcionista';

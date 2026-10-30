@@ -1,22 +1,24 @@
 /* SCV — Sistema de Cadastro de Visitantes */
 
 :root {
-    --bg: #f5f3ee;
+    --bg: #f6f4ef;
     --surface: #ffffff;
-    --ink: #1c2530;
-    --muted: #667180;
-    --line: #e3dfd5;
-    --primary: #1f3a5f;
-    --primary-hover: #162c49;
-    --primary-soft: #e8edf4;
+    --ink: #14213d;
+    --muted: #5b6477;
+    --line: #e6e1d6;
+    --primary: #0f2557;
+    --primary-hover: #0a1b42;
+    --primary-soft: #e4eaf6;
+    --gold: #d9972b;
+    --gold-soft: #fbebcb;
     --danger: #b3261e;
     --danger-soft: #fbeceb;
-    --side-bg: #14233a;
-    --side-ink: #c9d3e0;
+    --side-bg: #ffffff;
+    --side-ink: #3a4560;
     --radius: 10px;
     --side-w: 248px;
     --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-    --font-title: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-title: 'Montserrat', 'Inter', system-ui, sans-serif;
 }
 
 *,
@@ -44,7 +46,7 @@ h1,
 h2,
 h3 {
     font-family: var(--font-title);
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1.2;
     letter-spacing: -0.01em;
 }
@@ -89,6 +91,7 @@ svg.icon {
     display: flex;
     flex-direction: column;
     z-index: 50;
+    border-right: 1px solid var(--line);
     transition: transform 0.25s ease;
 }
 
@@ -96,26 +99,22 @@ svg.icon {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 20px 18px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    justify-content: center;
+    padding: 22px 16px 14px;
 }
 
-.brand strong {
-    display: block;
-    font-family: var(--font-title);
-    font-size: 22px;
-    font-weight: 600;
-    color: #fff;
-    letter-spacing: 0.02em;
-    line-height: 1.1;
+.logo-crop {
+    width: 200px;
+    height: 91px;
+    overflow: hidden;
 }
 
-.brand span {
+.logo-crop img {
     display: block;
-    margin-top: 2px;
-    font-size: 12px;
-    line-height: 1.3;
-    color: #8fa0b6;
+    width: 283px;
+    max-width: none;
+    margin-left: -41px;
+    margin-top: -95px;
 }
 
 .nav {
@@ -128,8 +127,9 @@ svg.icon {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 12px;
-    border-radius: 8px;
+    min-height: 46px;
+    padding: 10px 14px;
+    border-radius: 10px;
     color: var(--side-ink);
     text-decoration: none;
     font-weight: 500;
@@ -137,20 +137,21 @@ svg.icon {
 }
 
 .nav a:hover {
-    background: rgba(255, 255, 255, 0.07);
-    color: #fff;
+    background: var(--primary-soft);
+    color: var(--primary);
 }
 
 .nav a[aria-current="page"] {
-    background: rgba(255, 255, 255, 0.12);
+    background: var(--primary);
     color: #fff;
+    font-weight: 600;
 }
 
 .side-foot {
     padding: 16px 22px;
     font-size: 12px;
-    color: #7d8ea5;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--muted);
+    border-top: 1px solid var(--line);
 }
 
 .overlay {
@@ -207,7 +208,10 @@ main {
 }
 
 .page-head h1 {
-    font-size: 30px;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--primary);
 }
 
 .page-head p {
@@ -222,11 +226,12 @@ main {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 10px 16px;
+    min-height: 46px;
+    padding: 10px 20px;
     border: 1px solid transparent;
-    border-radius: 8px;
+    border-radius: 10px;
     font: inherit;
-    font-weight: 500;
+    font-weight: 600;
     text-decoration: none;
     cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
@@ -235,6 +240,7 @@ main {
 .btn-primary {
     background: var(--primary);
     color: #fff;
+    border-bottom: 3px solid var(--gold);
 }
 
 .btn-primary:hover {
@@ -244,7 +250,8 @@ main {
 .btn-ghost {
     background: var(--surface);
     border-color: var(--line);
-    color: var(--ink);
+    color: var(--primary);
+    border-color: #cfc9bb;
 }
 
 .btn-ghost:hover {
@@ -297,8 +304,12 @@ main {
 .panel {
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 28px;
+    border-radius: 16px;
+    padding: 32px;
+}
+
+.form-narrow {
+    border-top: 4px solid var(--gold);
 }
 
 .form-narrow {
@@ -327,12 +338,13 @@ input[type="email"],
 input[type="search"],
 textarea {
     width: 100%;
-    padding: 11px 12px;
+    min-height: 48px;
+    padding: 11px 14px;
     font: inherit;
     color: var(--ink);
-    background: #fff;
-    border: 1px solid #cfcabd;
-    border-radius: 8px;
+    background: #fbfaf7;
+    border: 1px solid #cfc9bb;
+    border-radius: 10px;
     transition: border-color 0.15s, box-shadow 0.15s;
 }
 
@@ -345,14 +357,12 @@ input:focus,
 textarea:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(31, 58, 95, 0.15);
+    box-shadow: 0 0 0 3px rgba(15, 37, 87, 0.15);
 }
 
 .segmented {
-    display: inline-flex;
-    border: 1px solid #cfcabd;
-    border-radius: 8px;
-    overflow: hidden;
+    display: flex;
+    gap: 8px;
 }
 
 .segmented input {
@@ -362,21 +372,26 @@ textarea:focus {
 }
 
 .segmented label {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
     margin: 0;
-    padding: 9px 26px;
+    padding: 0 20px;
     font-weight: 500;
     cursor: pointer;
-    background: #fff;
-    color: var(--muted);
-}
-
-.segmented label + input + label {
-    border-left: 1px solid #cfcabd;
+    background: #fbfaf7;
+    border: 1px solid #cfc9bb;
+    border-radius: 10px;
+    color: var(--ink);
 }
 
 .segmented input:checked + label {
     background: var(--primary);
+    border-color: var(--primary);
     color: #fff;
+    font-weight: 600;
 }
 
 .segmented input:focus-visible + label {
@@ -423,15 +438,17 @@ textarea:focus {
 .stat {
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: var(--radius);
+    border-radius: 14px;
     padding: 18px 20px;
 }
+
 
 .stat b {
     display: block;
     font-family: var(--font-title);
     font-size: 34px;
-    font-weight: 600;
+    font-weight: 700;
+    color: var(--primary);
     line-height: 1.1;
 }
 
@@ -537,12 +554,12 @@ td .sub {
 
 .tag {
     display: inline-block;
-    padding: 2px 9px;
+    padding: 3px 10px;
     border-radius: 99px;
-    font-size: 12.5px;
-    font-weight: 500;
-    background: var(--primary-soft);
-    color: var(--primary);
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--gold-soft);
+    color: #6b4000;
 }
 
 .tag.no {
@@ -579,10 +596,10 @@ td .sub {
     flex-direction: column;
     align-items: flex-start;
     gap: 14px;
-    padding: 18px;
+    padding: 20px;
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: var(--radius);
+    border-radius: 14px;
 }
 
 .vcard-top {
@@ -605,9 +622,9 @@ td .sub {
     letter-spacing: 0.02em;
 }
 
-.tone-0 { background: #e8edf4; color: #1f3a5f; }
+.tone-0 { background: #e4eaf6; color: #0f2557; }
 .tone-1 { background: #e5efe8; color: #2f5d44; }
-.tone-2 { background: #f3ebdc; color: #7a5a1e; }
+.tone-2 { background: #fbebcb; color: #6b4000; }
 .tone-3 { background: #efe6ee; color: #5e3a5c; }
 .tone-4 { background: #e7eaee; color: #3f4a58; }
 
@@ -617,9 +634,8 @@ td .sub {
 }
 
 .vcard-id h3 {
-    font-family: var(--font-body);
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0;
     overflow-wrap: anywhere;
 }
@@ -930,6 +946,11 @@ dialog .form-actions {
     justify-content: space-between;
 }
 
+.topbar {
+    height: 64px;
+    padding: 0 clamp(16px, 4vw, 40px);
+}
+
 #menuToggle {
     display: none;
 }
@@ -993,28 +1014,103 @@ dialog .form-actions {
 .login-wrap {
     max-width: none;
     min-height: 100vh;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.login-hero {
+    flex: 1 1 440px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 48px;
+    padding: 64px;
+    background: #0f2557;
+    color: #fff;
+}
+
+.login-hero svg {
+    position: absolute;
+    right: -60px;
+    bottom: -40px;
+    width: 420px;
+    opacity: 0.5;
+}
+
+.login-hero > * {
+    position: relative;
+}
+
+.login-hero .eyebrow {
+    font-family: var(--font-title);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #f2c46d;
+}
+
+.login-hero h2 {
+    max-width: 440px;
+    margin-bottom: 20px;
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.login-hero p {
+    max-width: 440px;
+    font-size: 17px;
+    line-height: 1.6;
+    color: #d3dcee;
+}
+
+.login-hero .small {
+    font-size: 14px;
+    color: #b8c4de;
+}
+
+.login-side {
+    flex: 1 1 440px;
     display: grid;
     place-items: center;
-    padding: 24px 16px;
+    padding: 48px 24px;
 }
 
 .login-card {
     width: 100%;
     max-width: 420px;
     text-align: left;
+    border-top-width: 1px;
+    box-shadow: 0 12px 32px rgba(15, 37, 87, 0.08);
 }
 
-.login-card img {
-    display: block;
+.login-card .logo-crop {
+    width: 260px;
+    height: 118px;
+    margin: 0 auto 8px;
+}
+
+.login-card .logo-crop img {
+    width: 367px;
+    margin-left: -54px;
+    margin-top: -124px;
 }
 
 .login-card h1 {
-    margin: 12px 0 4px;
+    margin: 4px 0 4px;
+    font-size: 24px;
+    text-align: center;
 }
 
 .login-lead {
     color: var(--muted);
     margin-bottom: 22px;
+    text-align: center;
 }
 
 .field label small {
@@ -1025,4 +1121,48 @@ dialog .form-actions {
 .login-submit {
     width: 100%;
     margin-top: 8px;
+}
+
+/* ---------- Lista: cabeçalho e cartões com ações em texto ---------- */
+
+.page-head-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.head-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag.role {
+    background: #eef1f7;
+    color: #3a4560;
+    font-weight: 500;
+}
+
+.vcard {
+    justify-content: space-between;
+}
+
+.vcard-actions {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+}
+
+.vcard-actions .btn {
+    flex: 1;
 }

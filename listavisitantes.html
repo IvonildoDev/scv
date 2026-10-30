@@ -7,9 +7,9 @@
     <title>Visitantes · SCV</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&display=swap">
-    <link rel="icon" href="logo.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="styles.css?v=5">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap">
+    <link rel="icon" href="imagem/logo.png" type="image/png">
+    <link rel="stylesheet" href="styles.css?v=8">
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
@@ -22,9 +22,15 @@
         <header class="topbar" id="topbar"></header>
 
         <main>
-            <div class="page-head">
-                <h1>Visitantes</h1>
-                <p>Todos os visitantes cadastrados, do mais recente ao mais antigo.</p>
+            <div class="page-head page-head-row">
+                <div>
+                    <h1>Visitantes</h1>
+                    <p>Todos os visitantes cadastrados, do mais recente ao mais antigo.</p>
+                </div>
+                <div class="head-actions">
+                    <button class="btn btn-ghost" id="sharePDF"><span data-icon="share"></span>Compartilhar PDF</button>
+                    <button class="btn btn-primary" id="generatePDF"><span data-icon="download"></span>Gerar PDF</button>
+                </div>
             </div>
 
             <div class="toolbar">
@@ -33,8 +39,6 @@
                     <input type="search" id="searchVisitor" placeholder="Buscar por nome, cidade ou igreja" aria-label="Buscar visitante">
                 </div>
                 <span class="spacer"></span>
-                <button class="btn btn-ghost" id="generatePDF"><span data-icon="download"></span>Baixar PDF</button>
-                <button class="btn btn-ghost" id="sharePDF"><span data-icon="share"></span>Compartilhar</button>
                 <button class="btn btn-quiet-danger" id="clearAll"><span data-icon="trash"></span>Apagar tudo</button>
             </div>
 
@@ -45,7 +49,7 @@
         </main>
     </div>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=8"></script>
 </body>
 
 </html>
