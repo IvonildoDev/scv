@@ -23,6 +23,7 @@ const ICONS = {
     menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
     phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
     pin: '<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
+    logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
     chat: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'
 };
 
@@ -57,6 +58,46 @@ function getVisitors() {
 
 function saveVisitors(list) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
+/* ---------- Recepcionista (login) ---------- */
+
+const RECEPTIONIST_KEY = 'receptionist';
+const RECEPTION_TEAM = 'Equipe de Recepção';
+
+function getReceptionist() {
+    try {
+        const data = JSON.parse(localStorage.getItem(RECEPTIONIST_KEY));
+        return data && data.name ? data : null;
+    } catch {
+        return null;
+    }
+}
+
+function receptionistNames(rec) {
+    return [rec.name, rec.name2].filter(Boolean).join(' e ');
+}
+
+function initLogin() {
+    if (getReceptionist()) {
+        location.replace('index.html');
+        return;
+    }
+    const form = document.getElementById('loginForm');
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        localStorage.setItem(RECEPTIONIST_KEY, JSON.stringify({
+            name: form.recName.value.trim(),
+            name2: form.recName2.value.trim()
+        }));
+        location.href = 'index.html';
+    });
+    form.recName.focus();
+}
+
+function logout() {
+    localStorage.removeItem(RECEPTIONIST_KEY);
+    location.href = 'login.html';
 }
 
 function todayBR() {
@@ -141,9 +182,19 @@ function buildShell() {
 
     const topbar = document.getElementById('topbar');
     if (topbar) {
+        const rec = getReceptionist();
         topbar.innerHTML = `
             <button class="icon-btn" id="menuToggle" aria-label="Abrir menu" aria-controls="sidebar">${icon('menu')}</button>
-            <span>${esc(document.body.dataset.title || 'SCV')}</span>`;
+            <span class="topbar-title">${esc(document.body.dataset.title || 'SCV')}</span>
+            <div class="rec-chip">
+                <span class="avatar ${avatarTone(rec.name)}" aria-hidden="true">${esc(initials(rec.name))}</span>
+                <div class="rec-text">
+                    <b>${esc(receptionistNames(rec))}</b>
+                    <small>${RECEPTION_TEAM}</small>
+                </div>
+                <button class="icon-btn" id="logoutBtn" aria-label="Sair" title="Sair">${icon('logout')}</button>
+            </div>`;
+        document.getElementById('logoutBtn').addEventListener('click', logout);
     }
 
     const overlay = document.getElementById('overlay');
@@ -421,10 +472,18 @@ function buildPDF() {
     doc.setTextColor(100);
     doc.text(`Gerado em ${todayBR()} · ${visitors.length} registros`, 14, 28);
 
+    const rec = getReceptionist();
+    let startY = 36;
+    if (rec) {
+        const label = rec.name2 ? 'Recepcionistas' : 'Recepcionista';
+        doc.text(`${label}: ${receptionistNames(rec)} (${RECEPTION_TEAM})`, 14, 35);
+        startY = 43;
+    }
+
     doc.autoTable({
         head: [['Nome', 'Cidade', 'Evangélico', 'Igreja', 'Cargo', 'Cadastro']],
         body: visitors.map(v => [v.name, v.city, v.evangelical, churchOf(v), roleOf(v), dateOnly(v.date)]),
-        startY: 36,
+        startY,
         styles: { fontSize: 10, cellPadding: 3 },
         headStyles: { fillColor: [31, 58, 95], textColor: 255 }
     });
@@ -478,7 +537,15 @@ function initContact() {
 /* ---------- Inicialização ---------- */
 
 document.addEventListener('DOMContentLoaded', () => {
-    buildShell();
-    const init = { home: initHome, cadastro: initForm, lista: initList, contato: initContact }[document.body.dataset.page];
+    const page = document.body.dataset.page;
+    if (page !== 'login') {
+        // Sem recepcionista identificado, volta para o login.
+        if (!getReceptionist()) {
+            location.replace('login.html');
+            return;
+        }
+        buildShell();
+    }
+    const init = { login: initLogin, home: initHome, cadastro: initForm, lista: initList, contato: initContact }[page];
     if (init) init();
 });

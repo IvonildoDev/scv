@@ -922,3 +922,107 @@ dialog .form-actions {
         transition: none !important;
     }
 }
+
+/* ---------- Recepcionista e login ---------- */
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+}
+
+#menuToggle {
+    display: none;
+}
+
+.rec-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.rec-chip .avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+}
+
+.rec-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    min-width: 0;
+}
+
+.rec-text b {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+}
+
+.rec-text small {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 12px;
+}
+
+.topbar-title {
+    display: none;
+}
+
+@media (max-width: 860px) {
+    #menuToggle {
+        display: inline-flex;
+    }
+
+    .topbar-title {
+        display: inline;
+    }
+
+    .rec-text small {
+        display: none;
+    }
+
+    .rec-text b {
+        max-width: 110px;
+    }
+}
+
+.login-wrap {
+    max-width: none;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px 16px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    text-align: left;
+}
+
+.login-card img {
+    display: block;
+}
+
+.login-card h1 {
+    margin: 12px 0 4px;
+}
+
+.login-lead {
+    color: var(--muted);
+    margin-bottom: 22px;
+}
+
+.field label small {
+    color: var(--muted);
+    font-weight: 400;
+}
+
+.login-submit {
+    width: 100%;
+    margin-top: 8px;
+}
